@@ -485,7 +485,9 @@
 
     /* ─── Responsive — Mobile ────────────────────────────────────────────── */
     @media (max-width: 640px) {
-      .tx-tab { padding: 0 10px; font-size: 0.75rem; }
+      .tx-header-inner { height: auto; padding: 0 16px; flex-wrap: wrap; }
+      .tx-header-tabs { width: 100%; margin-left: 0; height: 44px; border-top: 1px solid rgba(255,255,255,.1); }
+      .tx-tab { flex: 1; justify-content: center; padding: 0 4px; font-size: 0.75rem; }
       .tx-hero { padding: 40px 20px 72px; }
       .tx-hero h1 { font-size: 1.625rem; }
       .tx-hero-sub { font-size: 0.9375rem; }
