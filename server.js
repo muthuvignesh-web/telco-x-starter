@@ -39,45 +39,68 @@ app.get('/api/locations/:id', (req, res) => {
 // TODO — connect Tools 2–6 (build phase: 35–105 min)
 // ============================================================
 
-// Tool 2 — technology for a location (drives the valid product set).
+// Tool 2 — technology for a location.
 app.get('/api/locations/:id/technology', (req, res) => {
-  res.status(501).json({ error: 'Not implemented',
-    hint: 'Return data.getTechnology(req.params.id); 404 if the location is unknown.' });
+  const location = data.getLocation(req.params.id);
+  if (!location) return res.status(404).json({ error: 'Location not found' });
+  const tech = data.getTechnology(req.params.id);
+  if (!tech) return res.status(404).json({ error: 'Technology record not found for this location' });
+  res.json(tech);
 });
 
-// Tool 3 — valid products for a technology (AC5).
+// Tool 3 — valid products for a technology.
 app.get('/api/technology/:tech/products', (req, res) => {
-  res.status(501).json({ error: 'Not implemented',
-    hint: 'Return data.getProductsForTechnology(req.params.tech).' });
+  const products = data.getProductsForTechnology(req.params.tech);
+  res.json(products);
 });
 
-// Tool 4 — subscriber record. ACTIVE ONLY. Respect upgrade_eligible (AC4).
+// Tool 4 — subscriber record. ACTIVE locations only.
 app.get('/api/locations/:id/subscriber', (req, res) => {
-  res.status(501).json({ error: 'Not implemented',
-    hint: 'Guard with data.isActive(id) first. Non-active must not return records. Then data.getSubscriber(id).' });
+  const location = data.getLocation(req.params.id);
+  if (!location) return res.status(404).json({ error: 'Location not found' });
+  if (!data.isActive(req.params.id)) {
+    return res.status(403).json({ error: 'Subscriber records are only available for active locations' });
+  }
+  const subscriber = data.getSubscriber(req.params.id);
+  if (!subscriber) return res.status(404).json({ error: 'Subscriber record not found' });
+  res.json(subscriber);
 });
 
-// Tool 5 — network record. ACTIVE ONLY. network_status is RAG (AC4).
+// Tool 5 — network record. ACTIVE locations only.
 app.get('/api/locations/:id/network', (req, res) => {
-  res.status(501).json({ error: 'Not implemented',
-    hint: 'ACTIVE only. data.getNetwork(id).' });
+  const location = data.getLocation(req.params.id);
+  if (!location) return res.status(404).json({ error: 'Location not found' });
+  if (!data.isActive(req.params.id)) {
+    return res.status(403).json({ error: 'Network records are only available for active locations' });
+  }
+  const network = data.getNetwork(req.params.id);
+  if (!network) return res.status(404).json({ error: 'Network record not found' });
+  res.json(network);
 });
 
-// Tool 6 — service record. ACTIVE ONLY. service_health is RAG (AC4).
+// Tool 6 — service record. ACTIVE locations only.
 app.get('/api/locations/:id/service', (req, res) => {
-  res.status(501).json({ error: 'Not implemented',
-    hint: 'ACTIVE only. data.getService(id).' });
+  const location = data.getLocation(req.params.id);
+  if (!location) return res.status(404).json({ error: 'Location not found' });
+  if (!data.isActive(req.params.id)) {
+    return res.status(403).json({ error: 'Service records are only available for active locations' });
+  }
+  const service = data.getService(req.params.id);
+  if (!service) return res.status(404).json({ error: 'Service record not found' });
+  res.json(service);
 });
 
-// ============================================================
-// TODO — connect Tool 7 (build phase: 105–135 min)
-// ============================================================
-
-// Tool 7 — providers for a technology. Count + names must match Tool 7 (AC8).
+// Tool 7 — providers for a technology.
 app.get('/api/technology/:tech/providers', (req, res) => {
-  res.status(501).json({ error: 'Not implemented',
-    hint: 'Return data.getProvidersForTechnology(req.params.tech).' });
+  const providers = data.getProvidersForTechnology(req.params.tech);
+  res.json(providers);
 });
+
+// Wi-Fi placement assistant
+app.get('/wifi-setup', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'wifi-setup.html'));
+});
+// TODO: POST /api/wifi-tips — replace mock delay with real vision model call
 
 const PORT = process.env.PORT || 3001;
 if (require.main === module) {

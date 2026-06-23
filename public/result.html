@@ -3,25 +3,363 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Telco X — Address result</title>
+  <title>Telco X — Address Result</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    /* ─── Design tokens ──────────────────────────────────────────────────────── */
+    :root {
+      --tx-font:      "Inter", Arial, Helvetica, sans-serif;
+      --tx-navy:      #102A43;
+      --tx-blue:      #146EF5;
+      --tx-bg:        #F5F8FC;
+      --tx-surface:   #FFFFFF;
+      --tx-ink:       #172B4D;
+      --tx-muted:     #4A5566;
+      --tx-border:    #D9E2EC;
+      --rag-green:    #1B7F55;
+      --rag-amber:    #A85D00;
+      --rag-red:      #B8322A;
+      --tx-radius:    12px;
+      --tx-shadow:    0 1px 4px rgba(16,42,67,.08), 0 4px 16px rgba(16,42,67,.06);
+      --tx-max-width: 1120px;
+      --tx-touch-min: 44px;
+    }
+
+    [hidden] { display: none !important; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--tx-font);
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--tx-ink);
+      background: var(--tx-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Skip link ──────────────────────────────────────────────────────────── */
+    .skip-link {
+      position: absolute; top: -100%; left: 16px; z-index: 9999;
+      background: var(--tx-navy); color: #fff; padding: 8px 16px;
+      border-radius: 0 0 8px 8px; font-weight: 600;
+      text-decoration: none; font-size: 0.875rem;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ─── Header ─────────────────────────────────────────────────────────────── */
+    .tx-header {
+      background: var(--tx-navy);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .tx-header-inner {
+      max-width: var(--tx-max-width); margin: 0 auto; padding: 0 24px;
+      height: 56px; display: flex; align-items: center;
+    }
+    .tx-logo {
+      font-size: 1.125rem; font-weight: 700; color: #FFFFFF;
+      text-decoration: none; letter-spacing: 0.5px; line-height: 1; flex-shrink: 0;
+    }
+    .tx-logo:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 4px; border-radius: 4px; }
+    .tx-header-tabs { display: flex; align-items: stretch; height: 56px; margin-left: 8px; }
+    .tx-tab {
+      display: inline-flex; align-items: center; padding: 0 16px;
+      font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,.65);
+      text-decoration: none; white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color .15s, background .15s, border-color .15s;
+    }
+    .tx-tab:hover { color: #FFFFFF; background: rgba(255,255,255,.06); }
+    .tx-tab:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: -2px; }
+    .tx-tab--active { color: #FFFFFF; font-weight: 600; border-bottom-color: var(--tx-blue); }
+
+    /* ─── Address band ───────────────────────────────────────────────────────── */
+    .tx-addr-band {
+      background: linear-gradient(160deg, var(--tx-navy) 0%, #1A3F5C 100%);
+      padding: 32px 24px 56px;
+      position: relative; overflow: hidden;
+    }
+    .tx-addr-band::after {
+      content: "";
+      position: absolute; bottom: -1px; left: 0; right: 0;
+      height: 32px; background: var(--tx-bg);
+      border-radius: 32px 32px 0 0;
+    }
+    .tx-addr-band-inner {
+      max-width: var(--tx-max-width); margin: 0 auto;
+      position: relative; z-index: 1;
+    }
+    .tx-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,.8);
+      text-decoration: none; margin-bottom: 16px;
+      min-height: var(--tx-touch-min);
+    }
+    .tx-back:hover { color: #FFFFFF; }
+    .tx-back:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 2px; border-radius: 4px; }
+    .addr-heading-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .addr-title { font-size: 1.75rem; font-weight: 700; color: #FFFFFF; line-height: 1.25; }
+    .addr-sub   { font-size: 0.9375rem; color: rgba(255,255,255,.7); margin-top: 4px; }
+
+    /* Connection badges */
+    .conn-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 999px;
+      font-size: 0.8125rem; font-weight: 600; flex-shrink: 0;
+    }
+    .conn-badge--active   { background: #D1FAE5; color: var(--rag-green); }
+    .conn-badge--previous { background: #FEF3C7; color: var(--rag-amber); }
+    .conn-badge--never    { background: #F1F5F9; color: var(--tx-muted);  }
+    .conn-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    /* ─── Main ───────────────────────────────────────────────────────────────── */
+    .tx-main {
+      flex: 1; max-width: var(--tx-max-width); width: 100%;
+      margin: 0 auto; padding: 32px 24px 64px;
+    }
+
+    /* ─── Loading state ──────────────────────────────────────────────────────── */
+    .page-loading {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 16px; padding: 80px 24px;
+      color: var(--tx-muted); font-size: 0.9375rem;
+    }
+    .loading-spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--tx-border);
+      border-top-color: var(--tx-blue);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Page error ─────────────────────────────────────────────────────────── */
+    .page-error {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 20px 24px; margin: 32px 0;
+      background: #FFF5F5; border: 1px solid #F9CCCB;
+      border-radius: var(--tx-radius); font-size: 0.9375rem;
+      color: var(--rag-red);
+    }
+    .page-error a { color: var(--tx-blue); }
+
+    /* ─── Map panel ──────────────────────────────────────────────────────────── */
+    .map-panel {
+      aspect-ratio: 16 / 5;
+      border: 1px solid var(--tx-border); border-radius: var(--tx-radius);
+      box-shadow: var(--tx-shadow);
+      overflow: hidden; margin-bottom: 24px;
+      background: #E8F0F7;
+    }
+    .map-panel iframe {
+      width: 100%; height: 100%; border: none; display: block;
+    }
+
+    /* ─── Card grid ──────────────────────────────────────────────────────────── */
+    .result-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 16px;
+    }
+    .tx-card {
+      background: var(--tx-surface); border: 1px solid var(--tx-border);
+      border-radius: var(--tx-radius); box-shadow: var(--tx-shadow); padding: 24px;
+    }
+    .tx-card--full { grid-column: 1 / -1; }
+    .card-label {
+      font-size: 0.6875rem; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--tx-muted); margin-bottom: 12px;
+    }
+    .card-value { font-size: 1.25rem; font-weight: 700; color: var(--tx-navy); }
+    .card-sub   { font-size: 0.8125rem; color: var(--tx-muted); margin-top: 4px; }
+    .detail-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 0; border-bottom: 1px solid var(--tx-border); font-size: 0.875rem;
+    }
+    .detail-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .detail-key { color: var(--tx-muted); }
+    .detail-val { font-weight: 500; color: var(--tx-ink); }
+
+    /* ─── RAG badges (P2-AC-05) — colour class + visible text, never colour alone */
+    .tx-rag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.9375rem; font-weight: 700; margin-bottom: 4px;
+    }
+    .tx-rag--green { color: var(--rag-green); }
+    .tx-rag--amber { color: var(--rag-amber); }
+    .tx-rag--red   { color: var(--rag-red);   }
+
+    /* ─── Service unavailable (P2-AC-04) ────────────────────────────────────── */
+    .service-error {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #FFF1F0; border: 1px solid #F5C0BC;
+      border-radius: 8px; padding: 14px 16px;
+      font-size: 0.875rem; color: var(--rag-red); margin-top: 12px;
+    }
+    .service-error-icon { flex-shrink: 0; }
+
+    /* ─── Upgrade card (P2-AC-03) ────────────────────────────────────────────── */
+    .upgrade-body { font-size: 0.9375rem; color: var(--tx-ink); margin-bottom: 16px; }
+    .upgrade-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+    .upgrade-chip {
+      padding: 4px 12px; background: #EEF4FF; color: var(--tx-blue);
+      border-radius: 999px; font-size: 0.8125rem; font-weight: 600;
+    }
+    .upgrade-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #D1FAE5; border: 1px solid #6EE7B7;
+      border-radius: 8px; padding: 14px 16px;
+      font-size: 0.875rem; color: var(--rag-green);
+    }
+
+    /* ─── Product catalogue ──────────────────────────────────────────────────── */
+    .plan-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+    .plan-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 16px; background: var(--tx-bg);
+      border: 1px solid var(--tx-border); border-radius: 8px;
+    }
+    .plan-name { font-weight: 600; color: var(--tx-ink); font-size: 0.9375rem; }
+    .plan-meta { font-size: 0.8125rem; color: var(--tx-muted); margin-top: 2px; }
+    .plan-id   { font-size: 0.6875rem; color: var(--tx-muted); margin-top: 1px; font-family: monospace; }
+
+    /* ─── Buttons ────────────────────────────────────────────────────────────── */
+    .tx-btn-primary {
+      display: inline-flex; align-items: center; gap: 6px;
+      min-height: var(--tx-touch-min); padding: 10px 20px;
+      font-size: 0.9375rem; font-weight: 600; font-family: var(--tx-font);
+      color: #FFFFFF; background: var(--tx-blue);
+      border: none; border-radius: 8px; cursor: pointer;
+      text-decoration: none; transition: background .15s; white-space: nowrap;
+    }
+    .tx-btn-primary:hover { background: #0F5CD6; }
+    .tx-btn-primary:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 3px; }
+    .tx-btn-sm { font-size: 0.8125rem; padding: 8px 16px; min-height: 36px; }
+
+    /* ─── Footer ─────────────────────────────────────────────────────────────── */
+    .tx-footer { background: var(--tx-navy); border-top: 1px solid rgba(255,255,255,.08); margin-top: auto; }
+    .tx-footer-inner {
+      max-width: var(--tx-max-width); margin: 0 auto; padding: 24px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .tx-footer-brand { font-size: 0.875rem; font-weight: 700; color: #FFFFFF; letter-spacing: 0.5px; }
+    .tx-footer-copy  { font-size: 0.8125rem; color: rgba(255,255,255,.8); }
+    .tx-footer-nav   { display: flex; gap: 4px; flex-wrap: wrap; }
+    .tx-footer-nav a {
+      font-size: 0.8125rem; color: rgba(255,255,255,.8); text-decoration: none;
+      transition: color .15s; display: inline-flex; align-items: center;
+      min-height: 44px; min-width: 44px; padding: 0 10px; border-radius: 4px;
+    }
+    .tx-footer-nav a:hover { color: #FFFFFF; }
+    .tx-footer-nav a:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 2px; border-radius: 4px; }
+
+    /* ─── Responsive ─────────────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .tx-tab { padding: 0 10px; font-size: 0.75rem; }
+      .tx-addr-band { padding: 24px 16px 48px; }
+      .addr-title { font-size: 1.375rem; }
+      .tx-main { padding: 20px 16px 48px; }
+      .result-grid { grid-template-columns: 1fr; }
+      .tx-card--full { grid-column: auto; }
+      .plan-row { flex-direction: column; align-items: flex-start; }
+      .plan-row .tx-btn-primary { width: 100%; justify-content: center; }
+      .tx-footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .tx-footer-nav { flex-wrap: wrap; }
+    }
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .tx-addr-band { padding: 36px 24px 60px; }
+    }
+  </style>
 </head>
 <body>
-  <header class="tx-header"><span class="tx-logo">TELCO&nbsp;X</span></header>
-  <main class="tx-container">
-    <a class="tx-btn tx-btn--ghost" href="/index.html">&larr; Back to search</a>
-    <h1 id="address">Address result</h1>
 
-    <!-- TODO (Page 2):
-         1. Read ?id= from the URL, fetch /api/locations/:id, show address + map pin (coordinates).
-         2. Branch on connection_status:
-            - active   -> show subscriber info (Tools 4,5,6) + product set (Tools 2,3). Upgrade card only if upgrade_eligible.
-            - previous/never -> show valid product choices for the technology (Tools 2,3). No network/service records.
-         3. RAG badges for network/service status (use .tx-rag--green/amber/red). -->
-    <div id="map" class="tx-card"><span class="tx-muted">Map pin goes here (use latitude/longitude from Tool 1).</span></div>
-    <div id="content" class="tx-card"><span class="tx-muted">Result content — build me.</span></div>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ═══ HEADER ══════════════════════════════════════════════════════════ -->
+  <header class="tx-header" role="banner">
+    <div class="tx-header-inner">
+      <a href="/index.html" class="tx-logo" aria-label="Telco X — go to home page">TELCO&nbsp;X</a>
+      <nav class="tx-header-tabs" aria-label="Main navigation">
+        <a href="/index.html" class="tx-tab tx-tab--active" aria-current="page">Service Availability</a>
+        <a href="/wifi-setup" class="tx-tab">Improve your Wi-Fi setup</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ═══ ADDRESS BAND — populated by result.js ═══════════════════════════ -->
+  <div class="tx-addr-band" id="addr-band">
+    <div class="tx-addr-band-inner">
+      <a href="/index.html" class="tx-back" aria-label="Back to home page">&#8592; Back</a>
+      <div class="addr-heading-row">
+        <div>
+          <h1 class="addr-title" id="addr-title">Loading&hellip;</h1>
+          <p class="addr-sub" id="addr-sub"></p>
+        </div>
+        <span class="conn-badge" id="conn-badge" aria-live="polite"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN ════════════════════════════════════════════════════════════ -->
+  <main id="main" class="tx-main" role="main">
+
+    <!-- Loading indicator -->
+    <div id="page-loading" class="page-loading" aria-live="polite" aria-busy="true">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <p>Loading address details&hellip;</p>
+    </div>
+
+    <!-- Page-level error -->
+    <div id="page-error" class="page-error" hidden role="alert" aria-live="assertive">
+      <span aria-hidden="true">&#9888;</span>
+      <span id="page-error-text">Something went wrong.</span>
+      &nbsp;<a href="/index.html">Return to home</a>
+    </div>
+
+    <!-- Result content — populated by result.js -->
+    <div id="result-content" hidden>
+
+      <!-- Map panel -->
+      <div class="map-panel" id="map-panel">
+        <iframe id="map-iframe" title="Map" allowfullscreen loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade" src=""></iframe>
+      </div>
+
+      <!-- Cards grid -->
+      <div class="result-grid" id="result-grid" aria-live="polite"></div>
+
+      <!-- CTA button area -->
+      <div id="cta-area" style="margin-top:8px"></div>
+
+    </div><!-- /#result-content -->
+
   </main>
+
+  <!-- ═══ FOOTER ══════════════════════════════════════════════════════════ -->
+  <footer class="tx-footer" role="contentinfo">
+    <div class="tx-footer-inner">
+      <div>
+        <p class="tx-footer-brand">TELCO&nbsp;X</p>
+        <p class="tx-footer-copy">&copy; 2026 Telco X. All rights reserved.</p>
+      </div>
+      <nav class="tx-footer-nav" aria-label="Footer">
+        <a href="/privacy.html">Privacy policy</a>
+        <a href="/terms.html">Terms of use</a>
+        <a href="/accessibility.html">Accessibility</a>
+        <a href="/contact.html">Contact us</a>
+      </nav>
+    </div>
+  </footer>
+
   <script src="/js/api.js"></script>
   <script src="/js/result.js"></script>
+
 </body>
 </html>

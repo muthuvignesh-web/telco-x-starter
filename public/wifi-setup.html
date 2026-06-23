@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Telco X — Improve your Wi-Fi setup</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    :root {
+      --tx-font:      "Inter", Arial, Helvetica, sans-serif;
+      --tx-navy:      #102A43;
+      --tx-blue:      #146EF5;
+      --tx-aqua:      #007F7D;
+      --tx-bg:        #F5F8FC;
+      --tx-surface:   #FFFFFF;
+      --tx-ink:       #172B4D;
+      --tx-muted:     #4A5566;
+      --tx-border:    #D9E2EC;
+      --rag-green:    #1B7F55;
+      --tx-radius:    12px;
+      --tx-shadow:    0 1px 4px rgba(16,42,67,.08), 0 4px 16px rgba(16,42,67,.06);
+      --tx-max-width: 1120px;
+      --tx-touch-min: 44px;
+    }
+
+    [hidden] { display: none !important; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--tx-font);
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--tx-ink);
+      background: var(--tx-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Skip link ──────────────────────────────────────────────────────────── */
+    .skip-link {
+      position: absolute; top: -100%; left: 16px; z-index: 9999;
+      background: var(--tx-navy); color: #fff; padding: 8px 16px;
+      border-radius: 0 0 8px 8px; font-weight: 600;
+      text-decoration: none; font-size: 0.875rem;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ─── Header ─────────────────────────────────────────────────────────────── */
+    .tx-header {
+      background: var(--tx-navy);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .tx-header-inner {
+      max-width: var(--tx-max-width); margin: 0 auto; padding: 0 24px;
+      height: 56px; display: flex; align-items: center;
+    }
+    .tx-logo {
+      font-size: 1.125rem; font-weight: 700; color: #FFFFFF;
+      text-decoration: none; letter-spacing: 0.5px; line-height: 1; flex-shrink: 0;
+    }
+    .tx-logo:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 4px; border-radius: 4px; }
+    .tx-header-tabs { display: flex; align-items: stretch; height: 56px; margin-left: 8px; }
+    .tx-tab {
+      display: inline-flex; align-items: center; padding: 0 16px;
+      font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,.65);
+      text-decoration: none; white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color .15s, background .15s, border-color .15s;
+    }
+    .tx-tab:hover { color: #FFFFFF; background: rgba(255,255,255,.06); }
+    .tx-tab:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: -2px; }
+    .tx-tab--active { color: #FFFFFF; font-weight: 600; border-bottom-color: var(--tx-blue); }
+
+    /* ─── Page band ──────────────────────────────────────────────────────────── */
+    .tx-page-band {
+      background: linear-gradient(160deg, var(--tx-navy) 0%, #1A3F5C 100%);
+      padding: 40px 24px 64px; position: relative; overflow: hidden;
+    }
+    .tx-page-band::after {
+      content: ""; position: absolute; bottom: -1px; left: 0; right: 0;
+      height: 32px; background: var(--tx-bg); border-radius: 32px 32px 0 0;
+    }
+    .tx-page-band-inner {
+      max-width: var(--tx-max-width); margin: 0 auto; position: relative; z-index: 1;
+    }
+    .tx-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,.8);
+      text-decoration: none; margin-bottom: 20px; min-height: var(--tx-touch-min);
+    }
+    .tx-back:hover { color: #FFFFFF; }
+    .tx-back:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 2px; border-radius: 4px; }
+    .page-heading { font-size: 1.875rem; font-weight: 700; color: #FFFFFF; line-height: 1.25; }
+    .page-sub     { font-size: 1rem; color: rgba(255,255,255,.7); margin-top: 6px; }
+
+    /* ─── Main ───────────────────────────────────────────────────────────────── */
+    .tx-main {
+      flex: 1; max-width: 720px; width: 100%;
+      margin: 0 auto; padding: 32px 24px 64px;
+    }
+
+    /* ─── Privacy notice ─────────────────────────────────────────────────────── */
+    .privacy-notice {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #EEF4FF; border: 1px solid #BFDBFE;
+      border-radius: 8px; padding: 14px 16px;
+      font-size: 0.875rem; color: #1D4ED8; margin-bottom: 28px;
+    }
+    .privacy-notice-icon { flex-shrink: 0; margin-top: 1px; }
+
+    /* ─── Upload card ────────────────────────────────────────────────────────── */
+    .upload-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 24px;
+    }
+    .upload-card {
+      background: var(--tx-surface); border: 1px solid var(--tx-border);
+      border-radius: var(--tx-radius); box-shadow: var(--tx-shadow); padding: 24px;
+    }
+    .upload-label {
+      display: block; font-size: 0.875rem; font-weight: 600;
+      color: var(--tx-ink); margin-bottom: 10px;
+    }
+    .upload-input-wrap {
+      display: flex; align-items: center; justify-content: center;
+      border: 2px dashed var(--tx-border); border-radius: 8px;
+      padding: 24px 16px; cursor: pointer;
+      transition: border-color .15s, background .15s;
+      background: var(--tx-bg);
+    }
+    .upload-input-wrap:hover,
+    .upload-input-wrap:focus-within { border-color: var(--tx-blue); background: #EEF4FF; }
+    .file-input {
+      position: absolute; width: 1px; height: 1px;
+      overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+    }
+    .upload-prompt {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      font-size: 0.875rem; color: var(--tx-muted); text-align: center; pointer-events: none;
+    }
+    .upload-prompt-icon { font-size: 1.5rem; line-height: 1; }
+    .upload-prompt-cta  { color: var(--tx-blue); font-weight: 600; }
+
+    /* Preview area */
+    .upload-preview {
+      margin-top: 12px; padding: 10px 12px;
+      background: var(--tx-bg); border: 1px solid var(--tx-border);
+      border-radius: 8px; font-size: 0.8125rem; color: var(--tx-ink);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .upload-preview-icon { color: var(--rag-green); flex-shrink: 0; }
+
+    /* ─── Actions ────────────────────────────────────────────────────────────── */
+    .actions { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
+    .tx-btn-primary {
+      display: inline-flex; align-items: center; gap: 6px;
+      min-height: var(--tx-touch-min); padding: 11px 24px;
+      font-size: 1rem; font-weight: 600; font-family: var(--tx-font);
+      color: #FFFFFF; background: var(--tx-blue);
+      border: none; border-radius: 8px; cursor: pointer;
+      transition: background .15s;
+    }
+    .tx-btn-primary:hover:not(:disabled) { background: #0F5CD6; }
+    .tx-btn-primary:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 3px; border-radius: 8px; }
+    .tx-btn-primary:disabled {
+      background: var(--tx-border); color: var(--tx-muted); cursor: not-allowed;
+    }
+
+    /* ─── Loading state ──────────────────────────────────────────────────────── */
+    .loading-state {
+      display: flex; align-items: center; gap: 14px;
+      padding: 20px 24px; background: var(--tx-surface);
+      border: 1px solid var(--tx-border); border-radius: var(--tx-radius);
+      font-size: 0.9375rem; color: var(--tx-muted); margin-bottom: 24px;
+    }
+    .loading-spinner {
+      width: 24px; height: 24px; flex-shrink: 0;
+      border: 3px solid var(--tx-border);
+      border-top-color: var(--tx-blue);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Results section ────────────────────────────────────────────────────── */
+    .results-card {
+      background: var(--tx-surface); border: 1px solid var(--tx-border);
+      border-radius: var(--tx-radius); box-shadow: var(--tx-shadow); padding: 28px;
+    }
+    .results-heading {
+      font-size: 1.25rem; font-weight: 700; color: var(--tx-navy); margin-bottom: 16px;
+    }
+    .tips-list {
+      padding-left: 20px; display: flex; flex-direction: column; gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tips-list li { font-size: 0.9375rem; color: var(--tx-ink); line-height: 1.6; }
+    .confidence-label {
+      font-size: 0.8125rem; font-weight: 600; color: var(--tx-muted);
+      margin-bottom: 16px;
+    }
+    .disclaimer {
+      font-size: 0.8125rem; color: var(--tx-muted); line-height: 1.6;
+      border-top: 1px solid var(--tx-border); padding-top: 16px;
+    }
+
+    /* ─── Footer ─────────────────────────────────────────────────────────────── */
+    .tx-footer { background: var(--tx-navy); border-top: 1px solid rgba(255,255,255,.08); margin-top: auto; }
+    .tx-footer-inner {
+      max-width: var(--tx-max-width); margin: 0 auto; padding: 24px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .tx-footer-brand { font-size: 0.875rem; font-weight: 700; color: #FFFFFF; letter-spacing: 0.5px; }
+    .tx-footer-copy  { font-size: 0.8125rem; color: rgba(255,255,255,.8); }
+    .tx-footer-nav   { display: flex; gap: 4px; flex-wrap: wrap; }
+    .tx-footer-nav a {
+      font-size: 0.8125rem; color: rgba(255,255,255,.8); text-decoration: none;
+      transition: color .15s; display: inline-flex; align-items: center;
+      min-height: 44px; min-width: 44px; padding: 0 10px; border-radius: 4px;
+    }
+    .tx-footer-nav a:hover { color: #FFFFFF; }
+    .tx-footer-nav a:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 2px; border-radius: 4px; }
+
+    /* ─── Responsive ─────────────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .tx-tab { padding: 0 10px; font-size: 0.75rem; }
+      .tx-page-band { padding: 24px 16px 48px; }
+      .page-heading { font-size: 1.375rem; }
+      .tx-main { padding: 20px 16px 48px; }
+      .upload-grid { grid-template-columns: 1fr; }
+      .tx-footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .tx-footer-nav { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ═══ HEADER ══════════════════════════════════════════════════════════ -->
+  <header class="tx-header" role="banner">
+    <div class="tx-header-inner">
+      <a href="/index.html" class="tx-logo" aria-label="Telco X — go to home page">TELCO&nbsp;X</a>
+      <nav class="tx-header-tabs" aria-label="Main navigation">
+        <a href="/index.html" class="tx-tab">Service Availability</a>
+        <a href="/wifi-setup" class="tx-tab tx-tab--active" aria-current="page">Improve your Wi-Fi setup</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ═══ PAGE BAND ════════════════════════════════════════════════════════ -->
+  <div class="tx-page-band">
+    <div class="tx-page-band-inner">
+      <a href="/index.html" class="tx-back" aria-label="Back to address search">&#8592; Back to address search</a>
+      <h1 class="page-heading">Improve your Wi-Fi setup</h1>
+      <p class="page-sub">Check modem placement</p>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN ════════════════════════════════════════════════════════════ -->
+  <main id="main" class="tx-main" role="main">
+
+    <!-- Privacy notice — visible on load, above upload controls -->
+    <div class="privacy-notice" role="note">
+      <span class="privacy-notice-icon" aria-hidden="true">&#9432;</span>
+      <span>
+        Images are used only to generate placement tips in this demo.
+        Do not upload sensitive personal information.
+      </span>
+    </div>
+
+    <!-- Upload controls -->
+    <div class="upload-grid">
+
+      <!-- Modem photo -->
+      <div class="upload-card">
+        <label class="upload-label" for="input-modem">Modem photo</label>
+        <div class="upload-input-wrap" role="button" tabindex="0"
+             aria-label="Choose modem photo"
+             onclick="document.getElementById('input-modem').click()"
+             onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('input-modem').click()">
+          <input class="file-input" type="file" id="input-modem"
+                 accept="image/*" aria-describedby="preview-modem" />
+          <div class="upload-prompt" aria-hidden="true">
+            <span class="upload-prompt-icon">&#128247;</span>
+            <span class="upload-prompt-cta">Choose file</span>
+            <span>or drag and drop</span>
+          </div>
+        </div>
+        <div class="upload-preview" id="preview-modem" hidden>
+          <span class="upload-preview-icon" aria-hidden="true">&#10003;</span>
+          <span id="preview-modem-name"></span>
+        </div>
+      </div>
+
+      <!-- Home floorplan -->
+      <div class="upload-card">
+        <label class="upload-label" for="input-floorplan">Home floorplan</label>
+        <div class="upload-input-wrap" role="button" tabindex="0"
+             aria-label="Choose home floorplan"
+             onclick="document.getElementById('input-floorplan').click()"
+             onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('input-floorplan').click()">
+          <input class="file-input" type="file" id="input-floorplan"
+                 accept="image/*,.pdf" aria-describedby="preview-floorplan" />
+          <div class="upload-prompt" aria-hidden="true">
+            <span class="upload-prompt-icon">&#127968;</span>
+            <span class="upload-prompt-cta">Choose file</span>
+            <span>or drag and drop</span>
+          </div>
+        </div>
+        <div class="upload-preview" id="preview-floorplan" hidden>
+          <span class="upload-preview-icon" aria-hidden="true">&#10003;</span>
+          <span id="preview-floorplan-name"></span>
+        </div>
+      </div>
+
+    </div><!-- /.upload-grid -->
+
+    <!-- Action -->
+    <div class="actions">
+      <button id="btn-get-tips" class="tx-btn-primary" disabled
+              aria-disabled="true"
+              aria-describedby="btn-hint">
+        Get placement tips
+      </button>
+      <span id="btn-hint" class="confidence-label">
+        Upload both files to continue
+      </span>
+    </div>
+
+    <!-- Loading state (hidden by default) -->
+    <div id="loading-state" class="loading-state" hidden aria-live="polite" aria-busy="false">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <span>Analysing your home setup&hellip;</span>
+    </div>
+
+    <!-- Results section (hidden by default) -->
+    <section id="results-section" hidden aria-live="polite">
+      <div class="results-card">
+        <h2 class="results-heading">Your Wi-Fi placement tips</h2>
+        <ol class="tips-list" id="tips-list">
+          <!-- TODO: populated by wifi-setup.js from wifiTips response -->
+          <li><!-- TODO tip 1 --></li>
+          <li><!-- TODO tip 2 --></li>
+          <li><!-- TODO tip 3 --></li>
+          <li><!-- TODO tip 4 --></li>
+          <li><!-- TODO tip 5 --></li>
+        </ol>
+        <p class="confidence-label" id="confidence-label"></p>
+        <p class="disclaimer">
+          These tips are indicative only. Actual Wi-Fi performance may depend on
+          walls, building materials, device type, and network conditions.
+        </p>
+      </div>
+    </section>
+
+  </main><!-- /#main -->
+
+  <!-- ═══ FOOTER ══════════════════════════════════════════════════════════ -->
+  <footer class="tx-footer" role="contentinfo">
+    <div class="tx-footer-inner">
+      <div>
+        <p class="tx-footer-brand">TELCO&nbsp;X</p>
+        <p class="tx-footer-copy">&copy; 2026 Telco X. All rights reserved.</p>
+      </div>
+      <nav class="tx-footer-nav" aria-label="Footer">
+        <a href="/privacy.html">Privacy policy</a>
+        <a href="/terms.html">Terms of use</a>
+        <a href="/accessibility.html">Accessibility</a>
+        <a href="/contact.html">Contact us</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script src="/js/wifi-setup.js"></script>
+
+</body>
+</html>

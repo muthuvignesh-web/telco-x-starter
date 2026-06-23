@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy — Telco X</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    :root {
+      --tx-font: "Inter", Arial, Helvetica, sans-serif;
+      --tx-navy: #102A43;
+      --tx-blue: #146EF5;
+      --tx-bg: #F5F8FC;
+      --tx-surface: #FFFFFF;
+      --tx-ink: #172B4D;
+      --tx-muted: #5F6B7A;
+      --tx-border: #D9E2EC;
+      --tx-primary: #146EF5;
+      --tx-radius: 12px;
+      --tx-shadow: 0 1px 4px rgba(16,42,67,.08), 0 4px 16px rgba(16,42,67,.06);
+      --tx-max-width: 1120px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--tx-font); font-size: 16px; line-height: 1.6; color: var(--tx-ink); background: var(--tx-bg); min-height: 100vh; display: flex; flex-direction: column; }
+
+    .tx-header { background: var(--tx-navy); border-bottom: 1px solid rgba(255,255,255,.08); position: sticky; top: 0; z-index: 100; }
+    .tx-header-inner { max-width: var(--tx-max-width); margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; }
+    .tx-header-brand { display: flex; align-items: center; gap: 14px; }
+    .tx-logo { font-size: 18px; font-weight: 700; color: #fff; text-decoration: none; letter-spacing: .5px; line-height: 1; }
+    .tx-header-sep { width: 1px; height: 18px; background: rgba(255,255,255,.25); flex-shrink: 0; }
+    .tx-header-tagline { font-size: 13px; color: rgba(255,255,255,.55); line-height: 1; }
+
+    .tx-main { flex: 1; max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; width: 100%; }
+    .tx-back { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: var(--tx-blue); text-decoration: none; margin-bottom: 32px; }
+    .tx-back:hover { text-decoration: underline; }
+    .tx-back svg { flex-shrink: 0; }
+
+    h1 { font-size: 28px; font-weight: 700; color: var(--tx-ink); margin-bottom: 8px; }
+    .page-meta { font-size: 13px; color: var(--tx-muted); margin-bottom: 40px; }
+    h2 { font-size: 18px; font-weight: 600; color: var(--tx-ink); margin: 32px 0 10px; }
+    p { color: var(--tx-muted); margin-bottom: 14px; }
+    ul { color: var(--tx-muted); padding-left: 20px; margin-bottom: 14px; }
+    li { margin-bottom: 6px; }
+
+    .tx-footer { background: var(--tx-navy); border-top: 1px solid rgba(255,255,255,.08); margin-top: auto; }
+    .tx-footer-inner { max-width: var(--tx-max-width); margin: 0 auto; padding: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .tx-footer-brand { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: .5px; }
+    .tx-footer-copy { font-size: 13px; color: rgba(255,255,255,.45); }
+    .tx-footer-nav { display: flex; gap: 20px; }
+    .tx-footer-nav a { font-size: 13px; color: rgba(255,255,255,.55); text-decoration: none; }
+    .tx-footer-nav a:hover { color: #fff; }
+    @media (max-width: 640px) {
+      .tx-header-tagline { display: none; }
+      .tx-main { padding: 32px 16px 56px; }
+      h1 { font-size: 22px; }
+      .tx-footer-inner { flex-direction: column; align-items: flex-start; }
+      .tx-footer-nav { flex-wrap: wrap; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="tx-header" role="banner">
+    <div class="tx-header-inner">
+      <div class="tx-header-brand">
+        <a href="/index.html" class="tx-logo" aria-label="Telco X — go to home page">TELCO&nbsp;X</a>
+        <span class="tx-header-sep" aria-hidden="true"></span>
+        <span class="tx-header-tagline" aria-hidden="true">Service Availability</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="tx-main" id="main" role="main">
+    <a href="/index.html" class="tx-back" aria-label="Back to home page">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to home
+    </a>
+
+    <h1>Privacy Policy</h1>
+    <p class="page-meta">Last updated: 1 January 2026 &nbsp;·&nbsp; Version 2.1</p>
+
+    <h2>1. Overview</h2>
+    <p>Telco X is committed to protecting your personal information. This Privacy Policy explains how we collect, use, store, and disclose information when you use our Service Availability portal. By using this service, you agree to the practices described here.</p>
+
+    <h2>2. Information We Collect</h2>
+    <p>When you search for an address or check service availability, we may collect:</p>
+    <ul>
+      <li>Address search queries you enter into the search field</li>
+      <li>Location identifiers used to retrieve service data</li>
+      <li>Browser type, operating system, and general device information</li>
+      <li>Anonymised usage analytics (pages visited, session duration)</li>
+    </ul>
+    <p>We do <strong>not</strong> collect account credentials, payment details, or personally identifiable information through this portal.</p>
+
+    <h2>3. How We Use Your Information</h2>
+    <p>Information collected is used solely to:</p>
+    <ul>
+      <li>Return accurate service availability results for the address you search</li>
+      <li>Improve the reliability and performance of the portal</li>
+      <li>Generate anonymised aggregate statistics about service coverage</li>
+    </ul>
+
+    <h2>4. Data Storage and Retention</h2>
+    <p>Search queries are processed in memory and are not stored beyond your session. Anonymised analytics data is retained for up to 12 months before automatic deletion. We do not sell or share personal data with third parties for marketing purposes.</p>
+
+    <h2>5. Cookies</h2>
+    <p>This portal uses session cookies strictly necessary for functionality. No tracking or advertising cookies are used. You may disable cookies in your browser settings; however, some features may not work as expected.</p>
+
+    <h2>6. Your Rights</h2>
+    <p>Under applicable Australian privacy law, you have the right to access, correct, or request deletion of any personal information we hold. To exercise these rights, please use the <a href="/contact.html" style="color:var(--tx-blue)">Contact us</a> page.</p>
+
+    <h2>7. Contact</h2>
+    <p>For privacy-related enquiries, contact our Privacy Officer at <a href="/contact.html" style="color:var(--tx-blue)">the contact page</a> or write to Telco X, Privacy Officer, GPO Box 1234, Melbourne VIC 3000.</p>
+  </main>
+
+  <footer class="tx-footer" role="contentinfo">
+    <div class="tx-footer-inner">
+      <div>
+        <p class="tx-footer-brand">TELCO&nbsp;X</p>
+        <p class="tx-footer-copy">&copy; 2026 Telco X. All rights reserved.</p>
+      </div>
+      <nav class="tx-footer-nav" aria-label="Footer">
+        <a href="/privacy.html">Privacy policy</a>
+        <a href="/terms.html">Terms of use</a>
+        <a href="/accessibility.html">Accessibility</a>
+        <a href="/contact.html">Contact us</a>
+      </nav>
+    </div>
+  </footer>
+
+</body>
+</html>

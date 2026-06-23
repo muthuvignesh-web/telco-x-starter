@@ -3,22 +3,362 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Telco X — Details</title>
+  <title>Telco X — Service Providers</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    /* ─── Design tokens ──────────────────────────────────────────────────────── */
+    :root {
+      --tx-font:      "Inter", Arial, Helvetica, sans-serif;
+      --tx-navy:      #102A43;
+      --tx-blue:      #146EF5;
+      --tx-bg:        #F5F8FC;
+      --tx-surface:   #FFFFFF;
+      --tx-ink:       #172B4D;
+      --tx-muted:     #4A5566;
+      --tx-border:    #D9E2EC;
+      --rag-green:    #1B7F55;
+      --rag-amber:    #A85D00;
+      --rag-red:      #B8322A;
+      --tx-radius:    12px;
+      --tx-shadow:    0 1px 4px rgba(16,42,67,.08), 0 4px 16px rgba(16,42,67,.06);
+      --tx-max-width: 1120px;
+      --tx-touch-min: 44px;
+    }
+
+    [hidden] { display: none !important; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--tx-font);
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--tx-ink);
+      background: var(--tx-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Skip link ──────────────────────────────────────────────────────────── */
+    .skip-link {
+      position: absolute; top: -100%; left: 16px; z-index: 9999;
+      background: var(--tx-navy); color: #fff; padding: 8px 16px;
+      border-radius: 0 0 8px 8px; font-weight: 600;
+      text-decoration: none; font-size: 0.875rem;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ─── Header ─────────────────────────────────────────────────────────────── */
+    .tx-header {
+      background: var(--tx-navy);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .tx-header-inner {
+      max-width: var(--tx-max-width); margin: 0 auto; padding: 0 24px;
+      height: 56px; display: flex; align-items: center;
+    }
+    .tx-logo {
+      font-size: 1.125rem; font-weight: 700; color: #FFFFFF;
+      text-decoration: none; letter-spacing: 0.5px; line-height: 1; flex-shrink: 0;
+    }
+    .tx-logo:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 4px; border-radius: 4px; }
+    .tx-header-tabs { display: flex; align-items: stretch; height: 56px; margin-left: 8px; }
+    .tx-tab {
+      display: inline-flex; align-items: center; padding: 0 16px;
+      font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,.65);
+      text-decoration: none; white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color .15s, background .15s, border-color .15s;
+    }
+    .tx-tab:hover { color: #FFFFFF; background: rgba(255,255,255,.06); }
+    .tx-tab:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: -2px; }
+    .tx-tab--active { color: #FFFFFF; font-weight: 600; border-bottom-color: var(--tx-blue); }
+
+    /* ─── Page band ──────────────────────────────────────────────────────────── */
+    .tx-page-band {
+      background: linear-gradient(160deg, var(--tx-navy) 0%, #1A3F5C 100%);
+      padding: 32px 24px 56px;
+      position: relative; overflow: hidden;
+    }
+    .tx-page-band::after {
+      content: "";
+      position: absolute; bottom: -1px; left: 0; right: 0;
+      height: 32px; background: var(--tx-bg);
+      border-radius: 32px 32px 0 0;
+    }
+    .tx-page-band-inner {
+      max-width: var(--tx-max-width); margin: 0 auto;
+      position: relative; z-index: 1;
+    }
+    .tx-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,.8);
+      text-decoration: none; margin-bottom: 16px;
+      min-height: var(--tx-touch-min);
+    }
+    .tx-back:hover { color: #FFFFFF; }
+    .tx-back:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 2px; border-radius: 4px; }
+    .band-heading-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
+    }
+    .band-title { font-size: 1.75rem; font-weight: 700; color: #FFFFFF; line-height: 1.25; }
+    .band-sub   { font-size: 0.9375rem; color: rgba(255,255,255,.7); margin-top: 4px; }
+
+    /* Connection badges */
+    .conn-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 999px;
+      font-size: 0.8125rem; font-weight: 600; flex-shrink: 0;
+    }
+    .conn-badge--active   { background: #D1FAE5; color: var(--rag-green); }
+    .conn-badge--previous { background: #FEF3C7; color: var(--rag-amber); }
+    .conn-badge--never    { background: #F1F5F9; color: var(--tx-muted);  }
+    .conn-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    /* Plan strip */
+    .plan-strip { display: flex; gap: 12px; flex-wrap: wrap; }
+    .plan-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.18);
+      border-radius: 8px; padding: 8px 14px; font-size: 0.8125rem;
+    }
+    .plan-chip-label {
+      font-size: 0.6875rem; font-weight: 600; letter-spacing: .04em;
+      text-transform: uppercase; color: rgba(255,255,255,.5); margin-right: 2px;
+    }
+    .plan-chip-value { font-weight: 500; color: rgba(255,255,255,.9); }
+
+    /* ─── Main ───────────────────────────────────────────────────────────────── */
+    .tx-main {
+      flex: 1; max-width: var(--tx-max-width); width: 100%;
+      margin: 0 auto; padding: 32px 24px 64px;
+    }
+
+    /* ─── Loading ────────────────────────────────────────────────────────────── */
+    .page-loading {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 16px; padding: 80px 24px;
+      color: var(--tx-muted); font-size: 0.9375rem;
+    }
+    .loading-spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--tx-border);
+      border-top-color: var(--tx-blue);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Page error ─────────────────────────────────────────────────────────── */
+    .page-error {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 20px 24px; margin: 32px 0;
+      background: #FFF5F5; border: 1px solid #F9CCCB;
+      border-radius: var(--tx-radius); font-size: 0.9375rem;
+      color: var(--rag-red);
+    }
+    .page-error a { color: var(--tx-blue); }
+
+    /* ─── Info grid (never only) ─────────────────────────────────────────────── */
+    .info-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 24px;
+    }
+    .tx-card {
+      background: var(--tx-surface); border: 1px solid var(--tx-border);
+      border-radius: var(--tx-radius); box-shadow: var(--tx-shadow); padding: 24px;
+    }
+    .card-label {
+      font-size: 0.6875rem; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--tx-muted); margin-bottom: 12px;
+    }
+    .card-value { font-size: 1.25rem; font-weight: 700; color: var(--tx-navy); }
+    .card-sub   { font-size: 0.8125rem; color: var(--tx-muted); margin-top: 4px; }
+    .detail-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 0; border-bottom: 1px solid var(--tx-border); font-size: 0.875rem;
+    }
+    .detail-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .detail-key { color: var(--tx-muted); }
+    .detail-val { font-weight: 500; color: var(--tx-ink); }
+
+    /* ─── Section header ─────────────────────────────────────────────────────── */
+    .section-row {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+    }
+    .section-label {
+      font-size: 0.6875rem; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--tx-muted);
+    }
+    .count-badge {
+      display: inline-flex; align-items: center;
+      background: #EEF4FF; color: var(--tx-blue);
+      border-radius: 999px; padding: 3px 12px;
+      font-size: 0.75rem; font-weight: 600;
+    }
+
+    /* ─── Provider list ──────────────────────────────────────────────────────── */
+    .provider-list { display: flex; flex-direction: column; gap: 12px; }
+    .provider-row {
+      display: flex; align-items: center; gap: 16px;
+      padding: 20px 24px;
+      background: var(--tx-surface); border: 1px solid var(--tx-border);
+      border-radius: var(--tx-radius); box-shadow: var(--tx-shadow);
+    }
+    .provider-avatar {
+      width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--tx-navy) 0%, #1E4A6E 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.875rem; font-weight: 700; color: #FFFFFF; letter-spacing: 0.5px;
+    }
+    .provider-info { flex: 1; min-width: 0; }
+    .provider-name { font-size: 1rem; font-weight: 600; color: var(--tx-ink); }
+    .provider-meta { font-size: 0.8125rem; color: var(--tx-muted); margin-top: 3px; }
+
+    /* Available badge */
+    .provider-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 999px;
+      font-size: 0.8125rem; font-weight: 600; flex-shrink: 0;
+      background: #D1FAE5; color: var(--rag-green);
+    }
+    .provider-status-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+    .provider-status--mobile { display: none; }
+
+    /* Sign up button */
+    .tx-btn-primary {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      min-height: var(--tx-touch-min); padding: 10px 20px;
+      font-size: 0.9375rem; font-weight: 600; font-family: var(--tx-font);
+      color: #FFFFFF; background: var(--tx-blue);
+      border: none; border-radius: 8px; cursor: pointer;
+      transition: background .15s; white-space: nowrap; flex-shrink: 0;
+    }
+    .tx-btn-primary:hover:not(:disabled) { background: #0F5CD6; }
+    .tx-btn-primary:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 3px; border-radius: 8px; }
+    .tx-btn-primary:disabled { background: var(--rag-green); cursor: default; }
+    .tx-btn-sm { font-size: 0.875rem; padding: 8px 18px; min-height: 40px; }
+
+    /* ─── Info notice (never) ────────────────────────────────────────────────── */
+    .info-notice {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #EEF4FF; border: 1px solid #BFDBFE;
+      border-radius: 8px; padding: 14px 16px;
+      font-size: 0.875rem; color: #1D4ED8; margin-top: 24px;
+    }
+    .info-notice-icon { flex-shrink: 0; margin-top: 1px; }
+
+    /* ─── Footer ─────────────────────────────────────────────────────────────── */
+    .tx-footer { background: var(--tx-navy); border-top: 1px solid rgba(255,255,255,.08); margin-top: auto; }
+    .tx-footer-inner {
+      max-width: var(--tx-max-width); margin: 0 auto; padding: 24px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .tx-footer-brand { font-size: 0.875rem; font-weight: 700; color: #FFFFFF; letter-spacing: 0.5px; }
+    .tx-footer-copy  { font-size: 0.8125rem; color: rgba(255,255,255,.8); }
+    .tx-footer-nav   { display: flex; gap: 4px; flex-wrap: wrap; }
+    .tx-footer-nav a {
+      font-size: 0.8125rem; color: rgba(255,255,255,.8); text-decoration: none;
+      transition: color .15s; display: inline-flex; align-items: center;
+      min-height: 44px; min-width: 44px; padding: 0 10px; border-radius: 4px;
+    }
+    .tx-footer-nav a:hover { color: #FFFFFF; }
+    .tx-footer-nav a:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 2px; border-radius: 4px; }
+
+    /* ─── Responsive ─────────────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .tx-tab { padding: 0 10px; font-size: 0.75rem; }
+      .tx-page-band { padding: 24px 16px 48px; }
+      .band-title { font-size: 1.375rem; }
+      .tx-main { padding: 20px 16px 48px; }
+      .info-grid { grid-template-columns: 1fr; }
+      .provider-row { flex-wrap: wrap; }
+      .provider-status { width: 100%; }
+      .signup-btn { display: none; }
+      .provider-status--mobile { display: inline-flex; width: 100%; justify-content: center; }
+      .tx-footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .tx-footer-nav { flex-wrap: wrap; }
+    }
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .tx-page-band { padding: 36px 24px 60px; }
+    }
+  </style>
 </head>
 <body>
-  <header class="tx-header"><span class="tx-logo">TELCO&nbsp;X</span></header>
-  <main class="tx-container">
-    <a class="tx-btn tx-btn--ghost" href="#" id="back">&larr; Back</a>
-    <h1 id="title">Details</h1>
 
-    <!-- TODO (Page 3) — two modes:
-         DETAILS mode  (?id=&mode=details)  -> full subscriber view for an ACTIVE location (Tools 4,5,6).
-         PROVIDERS mode (?id=&mode=providers&tech=…&product=…) -> provider list from Tool 7.
-         AC8: provider count + names must match Tool 7 exactly. -->
-    <div id="content" class="tx-card"><span class="tx-muted">Detail / provider content — build me.</span></div>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ═══ HEADER ══════════════════════════════════════════════════════════ -->
+  <header class="tx-header" role="banner">
+    <div class="tx-header-inner">
+      <a href="/index.html" class="tx-logo" aria-label="Telco X — go to home page">TELCO&nbsp;X</a>
+      <nav class="tx-header-tabs" aria-label="Main navigation">
+        <a href="/index.html" class="tx-tab tx-tab--active" aria-current="page">Service Availability</a>
+        <a href="/wifi-setup" class="tx-tab">Improve your Wi-Fi setup</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ═══ PAGE BAND — populated by details.js ═════════════════════════════ -->
+  <div class="tx-page-band">
+    <div class="tx-page-band-inner">
+      <a href="/index.html" class="tx-back" id="back-link" aria-label="Back">&#8592; Back</a>
+      <div class="band-heading-row">
+        <div>
+          <h1 class="band-title" id="band-title">Loading&hellip;</h1>
+          <p class="band-sub" id="band-sub"></p>
+        </div>
+        <span class="conn-badge" id="conn-badge" aria-live="polite"></span>
+      </div>
+      <div class="plan-strip" id="plan-strip" hidden></div>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN ════════════════════════════════════════════════════════════ -->
+  <main id="main" class="tx-main" role="main">
+
+    <!-- Loading -->
+    <div id="page-loading" class="page-loading" aria-live="polite" aria-busy="true">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <p>Loading provider details&hellip;</p>
+    </div>
+
+    <!-- Error -->
+    <div id="page-error" class="page-error" hidden role="alert" aria-live="assertive">
+      <span aria-hidden="true">&#9888;</span>
+      <span id="page-error-text">Something went wrong.</span>
+      &nbsp;<a id="page-error-back" href="/index.html">Return to home</a>
+    </div>
+
+    <!-- Content — populated by details.js -->
+    <div id="page-content" hidden></div>
+
   </main>
+
+  <!-- ═══ FOOTER ══════════════════════════════════════════════════════════ -->
+  <footer class="tx-footer" role="contentinfo">
+    <div class="tx-footer-inner">
+      <div>
+        <p class="tx-footer-brand">TELCO&nbsp;X</p>
+        <p class="tx-footer-copy">&copy; 2026 Telco X. All rights reserved.</p>
+      </div>
+      <nav class="tx-footer-nav" aria-label="Footer">
+        <a href="/privacy.html">Privacy policy</a>
+        <a href="/terms.html">Terms of use</a>
+        <a href="/accessibility.html">Accessibility</a>
+        <a href="/contact.html">Contact us</a>
+      </nav>
+    </div>
+  </footer>
+
   <script src="/js/api.js"></script>
   <script src="/js/details.js"></script>
+
 </body>
 </html>

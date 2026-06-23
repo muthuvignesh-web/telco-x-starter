@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contact Us — Telco X</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    :root {
+      --tx-font: "Inter", Arial, Helvetica, sans-serif;
+      --tx-navy: #102A43;
+      --tx-blue: #146EF5;
+      --tx-bg: #F5F8FC;
+      --tx-surface: #FFFFFF;
+      --tx-ink: #172B4D;
+      --tx-muted: #5F6B7A;
+      --tx-border: #D9E2EC;
+      --tx-primary: #146EF5;
+      --tx-radius: 12px;
+      --tx-shadow: 0 1px 4px rgba(16,42,67,.08), 0 4px 16px rgba(16,42,67,.06);
+      --tx-max-width: 1120px;
+      --tx-touch-min: 44px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--tx-font); font-size: 16px; line-height: 1.6; color: var(--tx-ink); background: var(--tx-bg); min-height: 100vh; display: flex; flex-direction: column; }
+
+    .tx-header { background: var(--tx-navy); border-bottom: 1px solid rgba(255,255,255,.08); position: sticky; top: 0; z-index: 100; }
+    .tx-header-inner { max-width: var(--tx-max-width); margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; }
+    .tx-header-brand { display: flex; align-items: center; gap: 14px; }
+    .tx-logo { font-size: 18px; font-weight: 700; color: #fff; text-decoration: none; letter-spacing: .5px; line-height: 1; }
+    .tx-header-sep { width: 1px; height: 18px; background: rgba(255,255,255,.25); flex-shrink: 0; }
+    .tx-header-tagline { font-size: 13px; color: rgba(255,255,255,.55); line-height: 1; }
+
+    .tx-main { flex: 1; max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; width: 100%; }
+    .tx-back { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: var(--tx-blue); text-decoration: none; margin-bottom: 32px; }
+    .tx-back:hover { text-decoration: underline; }
+
+    h1 { font-size: 28px; font-weight: 700; color: var(--tx-ink); margin-bottom: 8px; }
+    .page-sub { font-size: 16px; color: var(--tx-muted); margin-bottom: 40px; }
+    h2 { font-size: 18px; font-weight: 600; color: var(--tx-ink); margin: 36px 0 16px; }
+    p { color: var(--tx-muted); margin-bottom: 14px; }
+
+    /* Contact cards */
+    .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 48px; }
+    .contact-card { background: var(--tx-surface); border: 1px solid var(--tx-border); border-radius: var(--tx-radius); box-shadow: var(--tx-shadow); padding: 24px; }
+    .contact-card-icon { width: 40px; height: 40px; background: #EBF2FF; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; color: var(--tx-blue); }
+    .contact-card h3 { font-size: 15px; font-weight: 600; color: var(--tx-ink); margin-bottom: 4px; }
+    .contact-card p { font-size: 14px; margin-bottom: 4px; }
+    .contact-card .detail { font-size: 14px; color: var(--tx-ink); font-weight: 500; }
+
+    /* Form */
+    .contact-form { background: var(--tx-surface); border: 1px solid var(--tx-border); border-radius: var(--tx-radius); box-shadow: var(--tx-shadow); padding: 32px; }
+    .form-row { margin-bottom: 20px; }
+    .form-row label { display: block; font-size: 14px; font-weight: 600; color: var(--tx-ink); margin-bottom: 6px; }
+    .form-row input,
+    .form-row select,
+    .form-row textarea {
+      width: 100%;
+      padding: 11px 14px;
+      font-size: 15px;
+      font-family: var(--tx-font);
+      color: var(--tx-ink);
+      background: var(--tx-surface);
+      border: 1.5px solid var(--tx-border);
+      border-radius: 8px;
+      transition: border-color .15s, box-shadow .15s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .form-row input:focus,
+    .form-row select:focus,
+    .form-row textarea:focus {
+      outline: none;
+      border-color: var(--tx-blue);
+      box-shadow: 0 0 0 3px rgba(20,110,245,.15);
+    }
+    .form-row textarea { resize: vertical; min-height: 120px; }
+    .form-row select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235F6B7A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+    .form-row .hint { font-size: 12px; color: var(--tx-muted); margin-top: 4px; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .tx-btn-primary {
+      min-height: var(--tx-touch-min);
+      padding: 11px 28px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: var(--tx-font);
+      color: #FFFFFF;
+      background: var(--tx-blue);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .tx-btn-primary:hover { background: #0F5CD6; }
+    .tx-btn-primary:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 3px; }
+
+    .form-success { display: none; align-items: flex-start; gap: 12px; padding: 16px 20px; background: #ECFDF5; border: 1px solid #6EE7B7; border-radius: 8px; margin-top: 16px; }
+    .form-success.visible { display: flex; }
+    .form-success p { color: #065F46; font-weight: 500; margin: 0; }
+
+    .tx-footer { background: var(--tx-navy); border-top: 1px solid rgba(255,255,255,.08); margin-top: auto; }
+    .tx-footer-inner { max-width: var(--tx-max-width); margin: 0 auto; padding: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .tx-footer-brand { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: .5px; }
+    .tx-footer-copy { font-size: 13px; color: rgba(255,255,255,.45); }
+    .tx-footer-nav { display: flex; gap: 20px; }
+    .tx-footer-nav a { font-size: 13px; color: rgba(255,255,255,.55); text-decoration: none; }
+    .tx-footer-nav a:hover { color: #fff; }
+    @media (max-width: 640px) {
+      .tx-header-tagline { display: none; }
+      .tx-main { padding: 32px 16px 56px; }
+      h1 { font-size: 22px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .tx-footer-inner { flex-direction: column; align-items: flex-start; }
+      .tx-footer-nav { flex-wrap: wrap; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="tx-header" role="banner">
+    <div class="tx-header-inner">
+      <div class="tx-header-brand">
+        <a href="/index.html" class="tx-logo" aria-label="Telco X — go to home page">TELCO&nbsp;X</a>
+        <span class="tx-header-sep" aria-hidden="true"></span>
+        <span class="tx-header-tagline" aria-hidden="true">Service Availability</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="tx-main" id="main" role="main">
+    <a href="/index.html" class="tx-back" aria-label="Back to home page">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to home
+    </a>
+
+    <h1>Contact Us</h1>
+    <p class="page-sub">Have a question or need help? We&rsquo;re here for you.</p>
+
+    <!-- Contact channels -->
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5z" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M2 7l8 5 8-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>Email</h3>
+        <p>General enquiries</p>
+        <span class="detail">support@telcox.example</span>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M3 4a1 1 0 011-1h3l1.5 4-2 1.5a11 11 0 005 5l1.5-2 4 1.5v3a1 1 0 01-1 1C7.16 18 2 12.84 2 6a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h3>Phone</h3>
+        <p>Mon–Fri, 8 am – 6 pm AEST</p>
+        <span class="detail">1800 123 456</span>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-card-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 2C6.686 2 4 4.686 4 8c0 4.5 6 10 6 10s6-5.5 6-10c0-3.314-2.686-6-6-6z" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="10" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <h3>Office</h3>
+        <p>Visits by appointment</p>
+        <span class="detail">Level 5, 123 Collins St<br>Melbourne VIC 3000</span>
+      </div>
+    </div>
+
+    <!-- Contact form -->
+    <h2>Send us a message</h2>
+    <div class="contact-form">
+      <form id="contact-form" novalidate>
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="cf-name">Full name <span aria-hidden="true">*</span></label>
+            <input id="cf-name" type="text" placeholder="Jane Smith" autocomplete="name" required />
+          </div>
+          <div class="form-row">
+            <label for="cf-email">Email address <span aria-hidden="true">*</span></label>
+            <input id="cf-email" type="email" placeholder="jane@example.com" autocomplete="email" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="cf-topic">Topic</label>
+          <select id="cf-topic">
+            <option value="">Select a topic…</option>
+            <option>Service availability query</option>
+            <option>Existing service issue</option>
+            <option>Accessibility feedback</option>
+            <option>Privacy enquiry</option>
+            <option>General feedback</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label for="cf-message">Message <span aria-hidden="true">*</span></label>
+          <textarea id="cf-message" placeholder="Describe your question or feedback…" required></textarea>
+          <p class="hint">Please do not include passwords or payment details.</p>
+        </div>
+
+        <button type="submit" class="tx-btn-primary">Send message</button>
+
+        <div class="form-success" id="form-success" role="status" aria-live="polite">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="10" cy="10" r="8" stroke="#065F46" stroke-width="1.5"/>
+            <path d="M6.5 10l2.5 2.5 4.5-4.5" stroke="#065F46" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p>Thanks for reaching out! We&rsquo;ve received your message and will respond within 2 business days.</p>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer class="tx-footer" role="contentinfo">
+    <div class="tx-footer-inner">
+      <div>
+        <p class="tx-footer-brand">TELCO&nbsp;X</p>
+        <p class="tx-footer-copy">&copy; 2026 Telco X. All rights reserved.</p>
+      </div>
+      <nav class="tx-footer-nav" aria-label="Footer">
+        <a href="/privacy.html">Privacy policy</a>
+        <a href="/terms.html">Terms of use</a>
+        <a href="/accessibility.html">Accessibility</a>
+        <a href="/contact.html">Contact us</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('contact-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const success = document.getElementById('form-success');
+      success.classList.add('visible');
+      this.querySelector('button[type="submit"]').disabled = true;
+      success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  </script>
+
+</body>
+</html>
