@@ -9,7 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="/css/styles.css" />
   <style>
-    /* ─── Design-system token overrides ─────────────────────────────────────── */
+    /* ─── Design-system token overrides (DESIGN_SYSTEM.md) ──────────────────
+       These intentionally shadow the starter tokens in styles.css.           */
     :root {
       --tx-font:        "Inter", Arial, Helvetica, sans-serif;
 
@@ -24,7 +25,7 @@
 
       /* Text */
       --tx-ink:         #172B4D;
-      --tx-muted:       #4A5566;
+      --tx-muted:       #5F6B7A;
       --tx-border:      #D9E2EC;
 
       /* RAG */
@@ -48,7 +49,7 @@
     html { scroll-behavior: smooth; }
     body {
       font-family: var(--tx-font);
-      font-size: 1rem;
+      font-size: 16px;
       line-height: 1.5;
       color: var(--tx-ink);
       background: var(--tx-bg);
@@ -57,7 +58,7 @@
       flex-direction: column;
     }
 
-    /* ─── Skip link ──────────────────────────────────────────────────────── */
+    /* ─── Skip link (keyboard / screen reader) ───────────────────────────── */
     .skip-link {
       position: absolute;
       top: -100%;
@@ -69,7 +70,7 @@
       border-radius: 0 0 8px 8px;
       font-weight: 600;
       text-decoration: none;
-      font-size: 0.875rem;
+      font-size: 14px;
     }
     .skip-link:focus { top: 0; }
 
@@ -88,37 +89,25 @@
       height: 56px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
     }
     .tx-logo {
-      display: inline-flex;
-      align-items: center;
-      min-height: var(--tx-touch-min);
-      font-size: 1.125rem;
+      font-size: 18px;
       font-weight: 700;
       color: #FFFFFF;
       text-decoration: none;
       letter-spacing: 0.5px;
-      line-height: 1;
-      flex-shrink: 0;
     }
     .tx-logo:focus-visible {
       outline: 2px solid var(--tx-blue);
       outline-offset: 4px;
       border-radius: 4px;
     }
-    .tx-header-tabs {
-      display: flex; align-items: stretch; height: 56px; margin-left: 8px;
+    .tx-header-tagline {
+      font-size: 13px;
+      color: rgba(255,255,255,.55);
+      font-weight: 400;
     }
-    .tx-tab {
-      display: inline-flex; align-items: center; padding: 0 16px;
-      font-size: 0.875rem; font-weight: 500; color: rgba(255,255,255,.65);
-      text-decoration: none; white-space: nowrap;
-      border-bottom: 2px solid transparent;
-      transition: color .15s, background .15s, border-color .15s;
-    }
-    .tx-tab:hover { color: #FFFFFF; background: rgba(255,255,255,.06); }
-    .tx-tab:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: -2px; }
-    .tx-tab--active { color: #FFFFFF; font-weight: 600; border-bottom-color: var(--tx-blue); }
 
     /* ─── Main / layout ──────────────────────────────────────────────────── */
     .tx-main {
@@ -152,14 +141,14 @@
       z-index: 1;
     }
     .tx-hero h1 {
-      font-size: 2rem;
+      font-size: 32px;
       font-weight: 700;
       color: #FFFFFF;
       line-height: 1.25;
       margin-bottom: 12px;
     }
     .tx-hero-sub {
-      font-size: 1rem;
+      font-size: 16px;
       color: rgba(255,255,255,.7);
       margin-bottom: 0;
     }
@@ -184,7 +173,7 @@
     /* ─── Search form ────────────────────────────────────────────────────── */
     .search-label {
       display: block;
-      font-size: 0.875rem;
+      font-size: 14px;
       font-weight: 600;
       color: var(--tx-ink);
       margin-bottom: 6px;
@@ -204,7 +193,7 @@
       width: 100%;
       min-height: var(--tx-touch-min);
       padding: 11px 40px 11px 14px;
-      font-size: 1rem;
+      font-size: 16px;
       font-family: var(--tx-font);
       color: var(--tx-ink);
       background: var(--tx-surface);
@@ -225,8 +214,7 @@
       border-bottom-right-radius: 0;
       border-bottom-color: transparent;
     }
-
-    /* Clear button */
+    /* clear-field icon placeholder */
     .search-clear-btn {
       position: absolute;
       right: 10px;
@@ -254,7 +242,7 @@
     .tx-btn-primary {
       min-height: var(--tx-touch-min);
       padding: 11px 20px;
-      font-size: 0.9375rem;
+      font-size: 15px;
       font-weight: 600;
       font-family: var(--tx-font);
       color: #FFFFFF;
@@ -280,12 +268,12 @@
 
     /* ─── Hint text ──────────────────────────────────────────────────────── */
     .search-hint {
-      font-size: 0.8125rem;
+      font-size: 13px;
       color: var(--tx-muted);
       margin-top: 8px;
     }
 
-    /* ─── Error message ──────────────────────────────────────────────────── */
+    /* ─── Error message (P1-AC-03) ───────────────────────────────────────── */
     .tx-error {
       display: flex;
       align-items: flex-start;
@@ -295,7 +283,7 @@
       background: #FFF5F5;
       border: 1px solid #F9CCCB;
       border-radius: 8px;
-      font-size: 0.875rem;
+      font-size: 14px;
       font-weight: 500;
       color: var(--rag-red);
     }
@@ -307,7 +295,7 @@
       margin-top: 1px;
     }
 
-    /* ─── Suggestion list ────────────────────────────────────────────────── */
+    /* ─── Suggestion list (P1-AC-01, P1-AC-02, P1-AC-05) ────────────────── */
     .suggestion-list {
       list-style: none;
       margin: 0;
@@ -333,6 +321,7 @@
     }
     .suggestion-item:last-child { border-bottom: none; }
     .suggestion-item:hover,
+    .suggestion-item:focus,
     .suggestion-item[aria-selected="true"] {
       background: #EBF2FF;
       outline: none;
@@ -342,17 +331,16 @@
       outline-offset: -2px;
     }
     .suggestion-address {
-      font-size: 0.9375rem;
+      font-size: 15px;
       font-weight: 500;
       color: var(--tx-ink);
     }
     .suggestion-meta {
-      font-size: 0.8125rem;
+      font-size: 13px;
       color: var(--tx-muted);
       margin-top: 1px;
     }
-
-    /* SR-only */
+    /* SR-only live region for result count */
     .sr-only {
       position: absolute;
       width: 1px;
@@ -365,14 +353,14 @@
       border: 0;
     }
 
-    /* ─── Divider ────────────────────────────────────────────────────────── */
+    /* ─── Divider with label ─────────────────────────────────────────────── */
     .search-divider {
       display: flex;
       align-items: center;
       gap: 12px;
       margin: 24px 0 16px;
       color: var(--tx-muted);
-      font-size: 0.75rem;
+      font-size: 12px;
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.08em;
@@ -385,7 +373,7 @@
       background: var(--tx-border);
     }
 
-    /* ─── Location quick-pick list ───────────────────────────────────────── */
+    /* ─── All-locations list (quick-pick skeleton) ───────────────────────── */
     .location-list {
       list-style: none;
       display: flex;
@@ -404,7 +392,7 @@
       cursor: pointer;
       text-decoration: none;
       color: var(--tx-ink);
-      font-size: 0.875rem;
+      font-size: 14px;
       transition: border-color .15s, background .15s;
     }
     .location-item:hover { border-color: var(--tx-blue); background: #EBF2FF; }
@@ -414,8 +402,7 @@
     }
     .location-item-left { display: flex; flex-direction: column; gap: 1px; }
     .location-item-addr { font-weight: 500; }
-    .location-item-suburb { font-size: 0.8125rem; color: var(--tx-muted); }
-    .location-item-arrow { color: var(--tx-muted); flex-shrink: 0; }
+    .location-item-suburb { font-size: 13px; color: var(--tx-muted); }
 
     /* ─── Footer ─────────────────────────────────────────────────────────── */
     .tx-footer {
@@ -434,86 +421,77 @@
       gap: 12px;
     }
     .tx-footer-brand {
-      font-size: 0.875rem;
+      font-size: 14px;
       font-weight: 700;
       color: #FFFFFF;
       letter-spacing: 0.5px;
     }
     .tx-footer-copy {
-      font-size: 0.8125rem;
-      color: rgba(255,255,255,.8);
+      font-size: 13px;
+      color: rgba(255,255,255,.45);
     }
     .tx-footer-nav {
       display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
+      gap: 20px;
     }
     .tx-footer-nav a {
-      font-size: 0.8125rem;
-      color: rgba(255,255,255,.8);
+      font-size: 13px;
+      color: rgba(255,255,255,.55);
       text-decoration: none;
       transition: color .15s;
-      display: inline-flex;
-      align-items: center;
-      min-height: 44px;
-      min-width: 44px;
-      padding: 0 10px;
-      border-radius: 4px;
     }
     .tx-footer-nav a:hover { color: #FFFFFF; }
     .tx-footer-nav a:focus-visible {
       outline: 2px solid var(--tx-blue);
       outline-offset: 2px;
-      border-radius: 4px;
+      border-radius: 2px;
     }
 
-    /* ─── Responsive — Tablet ────────────────────────────────────────────── */
+    /* ─── Responsive — Tablet (≥ 641px) ─────────────────────────────────── */
     @media (min-width: 641px) {
-      .tx-hero h1 { font-size: 2.375rem; }
+      .tx-hero h1 { font-size: 38px; }
       .tx-search-panel { padding: 0 32px 56px; }
       .tx-search-card { padding: 40px; }
     }
 
-    /* ─── Responsive — Desktop ───────────────────────────────────────────── */
+    /* ─── Responsive — Desktop (≥ 1025px) ───────────────────────────────── */
     @media (min-width: 1025px) {
       .tx-hero { padding: 80px 24px 100px; }
-      .tx-hero h1 { font-size: 2.5rem; }
-      .tx-hero-sub { font-size: 1.125rem; }
+      .tx-hero h1 { font-size: 40px; }
+      .tx-hero-sub { font-size: 18px; }
       .tx-search-panel { padding: 0 0 64px; }
       .tx-search-card { padding: 48px; }
     }
 
-    /* ─── Responsive — Mobile ────────────────────────────────────────────── */
+    /* ─── Responsive — Mobile (≤ 640px) ─────────────────────────────────── */
     @media (max-width: 640px) {
-      .tx-header-inner { height: auto; padding: 0 16px; flex-wrap: wrap; }
-      .tx-header-tabs { width: 100%; margin-left: 0; height: 44px; border-top: 1px solid rgba(255,255,255,.1); }
-      .tx-tab { flex: 1; justify-content: center; padding: 0 4px; font-size: 0.75rem; }
+      .tx-header-tagline { display: none; }
       .tx-hero { padding: 40px 20px 72px; }
-      .tx-hero h1 { font-size: 1.625rem; }
-      .tx-hero-sub { font-size: 0.9375rem; }
+      .tx-hero h1 { font-size: 26px; }
+      .tx-hero-sub { font-size: 15px; }
       .tx-search-panel { padding: 0 16px 40px; }
       .tx-search-card { padding: 20px 16px; }
       .search-input-row { flex-direction: column; }
-      .search-input-wrap { width: 100%; }
       .tx-btn-primary { width: 100%; text-align: center; }
+
       .tx-footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
       .tx-footer-nav { flex-wrap: wrap; gap: 12px; }
     }
+
   </style>
 </head>
 <body>
 
-  <!-- Skip navigation -->
+  <!-- Skip navigation (P1-AC-02 keyboard a11y) -->
   <a class="skip-link" href="#main">Skip to main content</a>
 
   <!-- ═══ HEADER ══════════════════════════════════════════════════════════ -->
   <header class="tx-header" role="banner">
     <div class="tx-header-inner">
-      <a href="/index.html" class="tx-logo" aria-label="Telco X — go to home page">TELCO&nbsp;X</a>
-      <nav class="tx-header-tabs" aria-label="Main navigation">
-        <a href="/index.html" class="tx-tab tx-tab--active" aria-current="page">Service Availability</a>
-        <a href="/wifi-setup" class="tx-tab">Improve your Wi-Fi setup</a>
-      </nav>
+      <a href="/index.html" class="tx-logo" aria-label="Telco X — go to home page">
+        TELCO&nbsp;X
+      </a>
+      <span class="tx-header-tagline" aria-hidden="true">Service Availability</span>
     </div>
   </header>
 
@@ -530,18 +508,30 @@
       </div>
     </section>
 
-    <!-- Search card panel -->
+    <!-- Search card panel (pulled up over the hero curve) -->
     <div class="tx-search-panel" role="search" aria-label="Address search">
       <div class="tx-search-card">
 
+        <!-- AC-04: persistent visible label, associated via for= -->
         <label for="search" class="search-label">Address search</label>
 
+        <!-- Input row -->
         <div class="search-input-row">
           <div class="search-input-wrap">
+            <!--
+              AC-01 / AC-02 / AC-05:
+                aria-autocomplete="list"  — announces suggestion behaviour
+                aria-controls="suggestion-list" — links to the listbox
+                aria-expanded            — toggled by JS when list opens/closes
+                aria-activedescendant    — set by JS to the focused option's id
+              AC-03:
+                aria-describedby="search-hint search-error" — reads hint then error
+              AC-04:
+                visible label above (not placeholder-only)
+            -->
             <input
               id="search"
               type="search"
-              role="combobox"
               class="tx-field"
               placeholder="e.g. 88 Eucalyptus Drive, Carlton"
               autocomplete="off"
@@ -553,18 +543,25 @@
               aria-controls="suggestion-list"
               aria-activedescendant=""
             />
+            <!-- Clear button — hidden until user types -->
             <button
               type="button"
               class="search-clear-btn"
               aria-label="Clear search"
               tabindex="-1"
             >
+              <!-- inline SVG × icon -->
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                 <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </button>
           </div>
 
+          <!--
+            AC-04:
+              disabled + aria-disabled="true" on load
+              JS removes both when input is non-empty
+          -->
           <button
             type="button"
             id="check-btn"
@@ -576,10 +573,17 @@
           </button>
         </div>
 
+        <!-- Hint text -->
         <p id="search-hint" class="search-hint">
           Start typing a suburb, postcode, or street name.
         </p>
 
+        <!--
+          AC-03:
+            role="alert" + aria-live="assertive" — screen reader announces immediately
+            Text set by JS to: "This address doesn't exist"
+            hidden attribute toggled by JS
+        -->
         <p
           id="search-error"
           class="tx-error"
@@ -594,6 +598,13 @@
           <span id="search-error-text">This address doesn&rsquo;t exist</span>
         </p>
 
+        <!--
+          AC-01 / AC-05:
+            role="listbox" — ARIA listbox pattern
+            aria-label     — names the listbox for AT
+            aria-live="polite" — announces result updates
+          Each <li> gets role="option" + id + aria-selected via JS
+        -->
         <ul
           id="suggestion-list"
           class="suggestion-list"
@@ -602,22 +613,88 @@
           aria-live="polite"
           aria-atomic="false"
           hidden
-        ></ul>
-
-        <!-- SR-only live region: announces result count -->
-        <div id="search-count" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-
-        <div class="search-divider" aria-hidden="true">or choose an address</div>
-
-        <ul class="location-list" id="location-list" aria-label="All available addresses">
-          <!-- Populated by search.js on load via GET /api/locations -->
-          <li><div class="location-item" style="opacity:.4;pointer-events:none">Loading addresses…</div></li>
+        >
+          <!--
+            Populated by search.js. Skeleton shows one example item (commented out).
+            Each item must have:
+              role="option"
+              id="suggestion-{n}"
+              tabindex="-1"
+              aria-selected="false"
+              data-id="{LOC-xxx}"
+            Minimum height: 44px (--tx-touch-min) — satisfied by .suggestion-item padding.
+          -->
+          <!-- EXAMPLE (rendered by JS):
+          <li
+            role="option"
+            id="suggestion-0"
+            class="suggestion-item"
+            tabindex="-1"
+            aria-selected="false"
+            data-id="LOC-002"
+          >
+            <span class="suggestion-address">88 Eucalyptus Drive</span>
+            <span class="suggestion-meta">Carlton VIC 3053</span>
+          </li>
+          -->
         </ul>
 
+        <!-- SR-only live region: announces count e.g. "3 suggestions available" (AC-05) -->
+        <div id="search-count" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+        <!-- Quick-pick divider -->
+        <div class="search-divider" aria-hidden="true">or choose an address</div>
+
+        <!--
+          All-locations quick-pick list.
+          Populated by api.js / search.js on page load from GET /api/locations.
+          Each item is a button linking to result.html?id={LOC-xxx}.
+          Skeleton shows representative placeholders for all three status types.
+        -->
+        <ul class="location-list" aria-label="All available addresses">
+
+          <li>
+            <a href="/result.html?id=LOC-001" class="location-item" aria-label="12 Marngo Street, Brunswick VIC 3056">
+              <span class="location-item-left">
+                <span class="location-item-addr">12 Marngo Street</span>
+                <span class="location-item-suburb">Brunswick VIC 3056</span>
+              </span>
+            </a>
+          </li>
+
+          <li>
+            <a href="/result.html?id=LOC-002" class="location-item" aria-label="88 Eucalyptus Drive, Carlton VIC 3053">
+              <span class="location-item-left">
+                <span class="location-item-addr">88 Eucalyptus Drive</span>
+                <span class="location-item-suburb">Carlton VIC 3053</span>
+              </span>
+            </a>
+          </li>
+
+          <li>
+            <a href="/result.html?id=LOC-005" class="location-item" aria-label="17 Banksia Lane, Northcote VIC 3070">
+              <span class="location-item-left">
+                <span class="location-item-addr">17 Banksia Lane</span>
+                <span class="location-item-suburb">Northcote VIC 3070</span>
+              </span>
+            </a>
+          </li>
+
+          <li>
+            <a href="/result.html?id=LOC-007" class="location-item" aria-label="134 Harbour View Road, Williamstown VIC 3016">
+              <span class="location-item-left">
+                <span class="location-item-addr">134 Harbour View Road</span>
+                <span class="location-item-suburb">Williamstown VIC 3016</span>
+              </span>
+            </a>
+          </li>
+
+        </ul>
       </div><!-- /.tx-search-card -->
     </div><!-- /.tx-search-panel -->
 
-  </main>
+
+  </main><!-- /#main -->
 
   <!-- ═══ FOOTER ══════════════════════════════════════════════════════════ -->
   <footer class="tx-footer" role="contentinfo">
@@ -627,16 +704,53 @@
         <p class="tx-footer-copy">&copy; 2026 Telco X. All rights reserved.</p>
       </div>
       <nav class="tx-footer-nav" aria-label="Footer">
-        <a href="/privacy.html">Privacy policy</a>
-        <a href="/terms.html">Terms of use</a>
-        <a href="/accessibility.html">Accessibility</a>
-        <a href="/contact.html">Contact us</a>
+        <a href="#">Privacy policy</a>
+        <a href="#">Terms of use</a>
+        <a href="#">Accessibility</a>
+        <a href="#">Contact us</a>
       </nav>
     </div>
   </footer>
 
+  <!-- ═══ SCRIPTS ═════════════════════════════════════════════════════════ -->
   <script src="/js/api.js"></script>
   <script src="/js/search.js"></script>
+
+  <!--
+  ┌──────────────────────────────────────────────────────────────────────────┐
+  │  SKELETON BEHAVIOUR NOTES FOR search.js                                  │
+  │                                                                          │
+  │  On input (keyup / input event):                                         │
+  │    1. If value.trim() === "":                                             │
+  │         – Hide #suggestion-list                                          │
+  │         – Set #search aria-expanded="false"                              │
+  │         – Disable #check-btn (disabled + aria-disabled="true")           │
+  │         – Hide #search-error                                              │
+  │    2. Else:                                                               │
+  │         – Enable #check-btn (remove disabled, set aria-disabled="false") │
+  │         – Fetch /api/locations filtered by query string                  │
+  │         – Populate #suggestion-list with <li role="option"> items        │
+  │         – Set #search aria-expanded="true"                               │
+  │         – Update #search-count text: "N suggestions available"           │
+  │                                                                          │
+  │  Keyboard navigation in listbox (P1-AC-02):                              │
+  │    ArrowDown  — move focus to next option; wrap at bottom                │
+  │    ArrowUp    — move focus to prev option; wrap at top                   │
+  │    Enter/Space — confirm selection → navigate to result.html?id=…        │
+  │    Escape     — close list, return focus to #search                      │
+  │    Tab        — close list, move to next focusable element               │
+  │    aria-activedescendant on #search updated to focused option id         │
+  │                                                                          │
+  │  On submit / option select:                                              │
+  │    – If no match: show #search-error, set text to                        │
+  │      "This address doesn't exist" (P1-AC-03)                             │
+  │    – If match: navigate to result.html?id={locationId}                   │
+  │                                                                          │
+  │  All-locations list:                                                     │
+  │    – On load, fetch GET /api/locations and render full list              │
+  │      replacing the skeleton placeholder items                            │
+  └──────────────────────────────────────────────────────────────────────────┘
+  -->
 
 </body>
 </html>

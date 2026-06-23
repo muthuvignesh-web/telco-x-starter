@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Telco X — Service Availability (Never Connected)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Design-system tokens (DESIGN_SYSTEM.md) ──────────────────────────── */
+    :root {
+      --tx-font:       "Inter", Arial, Helvetica, sans-serif;
+      --tx-navy:       #102A43;
+      --tx-blue:       #146EF5;
+      --tx-aqua:       #007F7D;
+      --tx-bg:         #F5F8FC;
+      --tx-surface:    #FFFFFF;
+      --tx-ink:        #172B4D;
+      --tx-muted:      #5F6B7A;
+      --tx-border:     #D9E2EC;
+      --rag-green:     #1B7F55;
+      --rag-amber:     #A85D00;
+      --rag-red:       #B8322A;
+      --tx-radius:     12px;
+      --tx-shadow:     0 1px 4px rgba(16,42,67,.08), 0 4px 16px rgba(16,42,67,.06);
+      --tx-max-width:  1120px;
+      --tx-touch-min:  44px;
+    }
+
+    /* ─── Reset / base ─────────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--tx-font);
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--tx-ink);
+      background: var(--tx-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Skip link ────────────────────────────────────────────────────────── */
+    .skip-link {
+      position: absolute; top: -100%; left: 16px; z-index: 9999;
+      background: var(--tx-navy); color: #fff; padding: 8px 16px;
+      border-radius: 0 0 8px 8px; font-weight: 600; text-decoration: none; font-size: 14px;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ─── Header ───────────────────────────────────────────────────────────── */
+    .tx-header {
+      background: var(--tx-navy);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .tx-header-inner {
+      max-width: var(--tx-max-width); margin: 0 auto; padding: 0 24px;
+      height: 56px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .tx-logo {
+      font-size: 18px; font-weight: 700; color: #FFFFFF;
+      text-decoration: none; letter-spacing: 0.5px;
+    }
+    .tx-logo:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 4px; border-radius: 4px; }
+    .tx-header-tagline { font-size: 13px; color: rgba(255,255,255,.55); font-weight: 400; }
+
+    /* ─── Page band ────────────────────────────────────────────────────────── */
+    .tx-page-band {
+      background: linear-gradient(160deg, var(--tx-navy) 0%, #1A3F5C 100%);
+      padding: 32px 24px 56px;
+      position: relative; overflow: hidden;
+    }
+    .tx-page-band::after {
+      content: "";
+      position: absolute; bottom: -1px; left: 0; right: 0;
+      height: 32px; background: var(--tx-bg);
+      border-radius: 32px 32px 0 0;
+    }
+    .tx-page-band-inner {
+      max-width: var(--tx-max-width); margin: 0 auto;
+      position: relative; z-index: 1;
+    }
+    .tx-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 500; color: rgba(255,255,255,.7);
+      text-decoration: none; margin-bottom: 16px; min-height: var(--tx-touch-min);
+    }
+    .tx-back:hover { color: #FFFFFF; }
+    .tx-back:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 2px; border-radius: 4px; }
+
+    .band-heading-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px; margin-bottom: 20px;
+    }
+    .band-title { font-size: 28px; font-weight: 700; color: #FFFFFF; line-height: 1.25; }
+    .band-sub   { font-size: 15px; color: rgba(255,255,255,.6); margin-top: 4px; }
+
+    /* Never connected badge */
+    .conn-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 999px;
+      font-size: 13px; font-weight: 600; flex-shrink: 0;
+      background: #F1F5F9; color: var(--tx-muted);
+    }
+    .conn-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    /* Plan summary chips */
+    .plan-strip { display: flex; gap: 12px; flex-wrap: wrap; }
+    .plan-chip {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.18);
+      border-radius: 8px; padding: 8px 14px; font-size: 13px;
+    }
+    .plan-chip-label {
+      font-size: 11px; font-weight: 600; letter-spacing: .04em;
+      text-transform: uppercase; color: rgba(255,255,255,.5); margin-right: 2px;
+    }
+    .plan-chip-value { font-weight: 500; color: rgba(255,255,255,.9); }
+
+    /* ─── Main ─────────────────────────────────────────────────────────────── */
+    .tx-main {
+      flex: 1; max-width: var(--tx-max-width); width: 100%;
+      margin: 0 auto; padding: 32px 24px 64px;
+    }
+
+    /* ─── Summary cards grid ───────────────────────────────────────────────── */
+    .info-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 24px;
+    }
+    .tx-card {
+      background: var(--tx-surface); border: 1px solid var(--tx-border);
+      border-radius: var(--tx-radius); box-shadow: var(--tx-shadow); padding: 24px;
+    }
+    .tx-card--full { grid-column: 1 / -1; }
+    .card-label {
+      font-size: 11px; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--tx-muted); margin-bottom: 12px;
+    }
+    .card-value { font-size: 20px; font-weight: 700; color: var(--tx-navy); }
+    .card-sub   { font-size: 13px; color: var(--tx-muted); margin-top: 4px; }
+    .detail-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 0; border-bottom: 1px solid var(--tx-border); font-size: 14px;
+    }
+    .detail-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .detail-key { color: var(--tx-muted); }
+    .detail-val { font-weight: 500; color: var(--tx-ink); }
+
+    /* ─── Section header ───────────────────────────────────────────────────── */
+    .section-row {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+    }
+    .section-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--tx-muted);
+    }
+    .count-badge {
+      display: inline-flex; align-items: center;
+      background: #EEF4FF; color: var(--tx-blue);
+      border-radius: 999px; padding: 3px 12px;
+      font-size: 12px; font-weight: 600;
+    }
+
+    /* ─── Provider list (read-only — no sign-up button) ────────────────────── */
+    .provider-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .provider-row {
+      display: flex; align-items: center; gap: 16px;
+      padding: 20px 24px;
+      background: var(--tx-surface); border: 1px solid var(--tx-border);
+      border-radius: var(--tx-radius); box-shadow: var(--tx-shadow);
+    }
+
+    .provider-avatar {
+      width: 48px; height: 48px; border-radius: 10px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--tx-navy) 0%, #1E4A6E 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: #FFFFFF; letter-spacing: 0.5px;
+    }
+
+    .provider-info { flex: 1; min-width: 0; }
+    .provider-name { font-size: 16px; font-weight: 600; color: var(--tx-ink); }
+    .provider-meta { font-size: 13px; color: var(--tx-muted); margin-top: 3px; }
+
+    /* Availability indicator — replaces the sign-up button */
+    .provider-status {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 999px;
+      font-size: 13px; font-weight: 600; flex-shrink: 0;
+      background: #D1FAE5; color: var(--rag-green);
+    }
+    .provider-status-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex-shrink: 0;
+    }
+
+    /* ─── Info notice banner ───────────────────────────────────────────────── */
+    .info-notice {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #EEF4FF; border: 1px solid #BFDBFE;
+      border-radius: 8px; padding: 14px 16px;
+      font-size: 14px; color: #1D4ED8; margin-top: 24px;
+    }
+    .info-notice-icon { flex-shrink: 0; font-size: 15px; margin-top: 1px; }
+
+    /* ─── Footer ───────────────────────────────────────────────────────────── */
+    .tx-footer { background: var(--tx-navy); border-top: 1px solid rgba(255,255,255,.08); margin-top: auto; }
+    .tx-footer-inner {
+      max-width: var(--tx-max-width); margin: 0 auto; padding: 24px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .tx-footer-brand { font-size: 14px; font-weight: 700; color: #FFFFFF; letter-spacing: 0.5px; }
+    .tx-footer-copy  { font-size: 13px; color: rgba(255,255,255,.45); }
+    .tx-footer-nav   { display: flex; gap: 20px; }
+    .tx-footer-nav a { font-size: 13px; color: rgba(255,255,255,.55); text-decoration: none; transition: color .15s; }
+    .tx-footer-nav a:hover { color: #FFFFFF; }
+    .tx-footer-nav a:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 2px; border-radius: 2px; }
+
+    /* ─── Responsive ───────────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .tx-header-tagline { display: none; }
+      .tx-page-band { padding: 24px 16px 48px; }
+      .band-title { font-size: 22px; }
+      .tx-main { padding: 20px 16px 48px; }
+      .info-grid { grid-template-columns: 1fr; }
+      .tx-card--full { grid-column: auto; }
+      .provider-row { flex-wrap: wrap; }
+      .provider-status { width: 100%; justify-content: center; }
+      .tx-footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .tx-footer-nav { flex-wrap: wrap; gap: 12px; }
+    }
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .tx-page-band { padding: 36px 24px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ═══ HEADER ══════════════════════════════════════════════════════════ -->
+  <header class="tx-header" role="banner">
+    <div class="tx-header-inner">
+      <a href="/index.html" class="tx-logo" aria-label="Telco X — go to home page">
+        TELCO&nbsp;X
+      </a>
+      <span class="tx-header-tagline" aria-hidden="true">Service Availability</span>
+    </div>
+  </header>
+
+  <!-- ═══ PAGE BAND ════════════════════════════════════════════════════════
+       JS populates address, technology, and plan from URL params + Tool 3  -->
+  <div class="tx-page-band">
+    <div class="tx-page-band-inner">
+
+      <a href="/result.html?id=LOC-010" class="tx-back" aria-label="Back to address result">
+        &#8592; Back to result
+      </a>
+
+      <div class="band-heading-row">
+        <div>
+          <h1 class="band-title">Service Availability</h1>
+          <p class="band-sub" id="page-sub">22 Banksia Court, Sunshine VIC 3020 &mdash; LOC-010</p>
+        </div>
+        <span class="conn-badge" aria-label="Connection status: Never connected">
+          <span class="conn-badge-dot" aria-hidden="true"></span>
+          Never connected
+        </span>
+      </div>
+
+      <!-- Plan summary strip — populated by JS from URL params + Tool 3 -->
+      <div class="plan-strip">
+        <div class="plan-chip">
+          <span class="plan-chip-label">Technology</span>
+          <span class="plan-chip-value" id="chip-tech">FTTP</span>
+        </div>
+        <div class="plan-chip">
+          <span class="plan-chip-label">Selected plan</span>
+          <span class="plan-chip-value" id="chip-plan">Family &mdash; 100 / 20 Mbps</span>
+        </div>
+        <div class="plan-chip">
+          <span class="plan-chip-label">Product ID</span>
+          <span class="plan-chip-value" id="chip-product">P-FTTP-100</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ MAIN ════════════════════════════════════════════════════════════ -->
+  <main id="main" class="tx-main" role="main">
+
+    <!-- ── Plan summary cards — Tool 2 (technology) + Tool 3 (selected plan) -->
+    <div class="info-grid">
+
+      <!-- Connection technology — Tool 2 -->
+      <div class="tx-card">
+        <p class="card-label">Connection technology</p>
+        <p class="card-value" id="tech-value">FTTP</p>
+        <p class="card-sub" id="tech-desc">Fibre to the premises</p>
+      </div>
+
+      <!-- Selected plan — Tool 3, fetched via product ID from URL -->
+      <div class="tx-card">
+        <p class="card-label">Selected plan</p>
+        <p class="card-value" id="plan-name">Family</p>
+        <p class="card-sub" id="plan-speed">100 Mbps down &middot; 20 Mbps up</p>
+        <div style="margin-top:16px">
+          <div class="detail-row">
+            <span class="detail-key">Product ID</span>
+            <span class="detail-val" id="plan-id">P-FTTP-100</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-key">Technology</span>
+            <span class="detail-val">FTTP</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.info-grid -->
+
+
+    <!-- ── Provider list — Tool 7
+         Read-only view: shows which providers service this address
+         No sign-up button — availability indicator only               -->
+    <div class="section-row">
+      <span class="section-label">Providers available at this address</span>
+      <!-- JS updates from Tool 7 response count -->
+      <span class="count-badge" id="provider-count" aria-label="5 providers available">
+        5 providers
+      </span>
+    </div>
+
+    <!-- Provider rows — JS rebuilds from Tool 7 data
+         No sign-up button on any row (never-connected read-only view) -->
+    <div class="provider-list" id="provider-list" role="list">
+
+      <div class="provider-row" role="listitem">
+        <div class="provider-avatar" aria-hidden="true">TL</div>
+        <div class="provider-info">
+          <p class="provider-name">Toby Limited</p>
+          <p class="provider-meta">FTTP &middot; Family &mdash; 100 / 20 Mbps</p>
+        </div>
+        <span class="provider-status" aria-label="Toby Limited: Available at this address">
+          <span class="provider-status-dot" aria-hidden="true"></span>
+          Available
+        </span>
+      </div>
+
+      <div class="provider-row" role="listitem">
+        <div class="provider-avatar" aria-hidden="true">GL</div>
+        <div class="provider-info">
+          <p class="provider-name">Gigi Limited</p>
+          <p class="provider-meta">FTTP &middot; Family &mdash; 100 / 20 Mbps</p>
+        </div>
+        <span class="provider-status" aria-label="Gigi Limited: Available at this address">
+          <span class="provider-status-dot" aria-hidden="true"></span>
+          Available
+        </span>
+      </div>
+
+      <div class="provider-row" role="listitem">
+        <div class="provider-avatar" aria-hidden="true">YY</div>
+        <div class="provider-info">
+          <p class="provider-name">Yoyo Limited</p>
+          <p class="provider-meta">FTTP &middot; Family &mdash; 100 / 20 Mbps</p>
+        </div>
+        <span class="provider-status" aria-label="Yoyo Limited: Available at this address">
+          <span class="provider-status-dot" aria-hidden="true"></span>
+          Available
+        </span>
+      </div>
+
+      <div class="provider-row" role="listitem">
+        <div class="provider-avatar" aria-hidden="true">NX</div>
+        <div class="provider-info">
+          <p class="provider-name">Nexus Telecom</p>
+          <p class="provider-meta">FTTP &middot; Family &mdash; 100 / 20 Mbps</p>
+        </div>
+        <span class="provider-status" aria-label="Nexus Telecom: Available at this address">
+          <span class="provider-status-dot" aria-hidden="true"></span>
+          Available
+        </span>
+      </div>
+
+      <div class="provider-row" role="listitem">
+        <div class="provider-avatar" aria-hidden="true">VB</div>
+        <div class="provider-info">
+          <p class="provider-name">VeloBlue</p>
+          <p class="provider-meta">FTTP &middot; Family &mdash; 100 / 20 Mbps</p>
+        </div>
+        <span class="provider-status" aria-label="VeloBlue: Available at this address">
+          <span class="provider-status-dot" aria-hidden="true"></span>
+          Available
+        </span>
+      </div>
+
+    </div><!-- /#provider-list -->
+
+    <!-- Info notice — no action required from the user on this page -->
+    <div class="info-notice" role="note">
+      <span class="info-notice-icon" aria-hidden="true">&#9432;</span>
+      <span>
+        This address has never been connected. The providers listed above service
+        this area for the selected plan. Contact your preferred provider directly to arrange a connection.
+      </span>
+    </div>
+
+  </main><!-- /#main -->
+
+  <!-- ═══ FOOTER ══════════════════════════════════════════════════════════ -->
+  <footer class="tx-footer" role="contentinfo">
+    <div class="tx-footer-inner">
+      <div>
+        <p class="tx-footer-brand">TELCO&nbsp;X</p>
+        <p class="tx-footer-copy">&copy; 2026 Telco X. All rights reserved.</p>
+      </div>
+      <nav class="tx-footer-nav" aria-label="Footer">
+        <a href="#">Privacy policy</a>
+        <a href="#">Terms of use</a>
+        <a href="#">Accessibility</a>
+        <a href="#">Contact us</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!--
+  ═══════════════════════════════════════════════════════════════════════════
+  SKELETON BEHAVIOUR NOTES — for the developer implementing never-connected.js
+  ═══════════════════════════════════════════════════════════════════════════
+
+  URL params: ?id=LOC-010&mode=providers&tech=FTTP&product=P-FTTP-100
+
+  On page load:
+  1. Confirm connection_status = never from Tool 1 (redirect to result.html if not)
+  2. Fetch GET /api/locations/:id → populate #page-sub, back link href
+  3. Populate plan strip and summary cards:
+     #chip-tech / #tech-value / #tech-desc  ← tech param (Tool 2 description)
+     #chip-plan / #plan-name / #plan-speed  ← match product param against Tool 3
+     #chip-product / #plan-id              ← product param
+
+  Provider list (read-only — no sign-up button):
+  4. Fetch GET /api/technology/:tech/providers (Tool 7)
+  5. Clear and rebuild #provider-list:
+     → One .provider-row per provider — no sign-up button
+     → Each row shows avatar initials, provider name, plan meta, and green "Available" badge
+     → Update #provider-count text + aria-label with actual count from Tool 7
+  -->
+
+</body>
+</html>

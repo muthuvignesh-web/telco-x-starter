@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Accessibility — Telco X</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/styles.css" />
+  <style>
+    :root {
+      --tx-font: "Inter", Arial, Helvetica, sans-serif;
+      --tx-navy: #102A43;
+      --tx-blue: #146EF5;
+      --tx-bg: #F5F8FC;
+      --tx-surface: #FFFFFF;
+      --tx-ink: #172B4D;
+      --tx-muted: #5F6B7A;
+      --tx-border: #D9E2EC;
+      --tx-primary: #146EF5;
+      --tx-radius: 12px;
+      --tx-max-width: 1120px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--tx-font); font-size: 16px; line-height: 1.6; color: var(--tx-ink); background: var(--tx-bg); min-height: 100vh; display: flex; flex-direction: column; }
+
+    .tx-header { background: var(--tx-navy); border-bottom: 1px solid rgba(255,255,255,.08); position: sticky; top: 0; z-index: 100; }
+    .tx-header-inner { max-width: var(--tx-max-width); margin: 0 auto; padding: 0 24px; height: 56px; display: flex; align-items: center; }
+    .tx-header-brand { display: flex; align-items: center; gap: 14px; }
+    .tx-logo { font-size: 18px; font-weight: 700; color: #fff; text-decoration: none; letter-spacing: .5px; line-height: 1; }
+    .tx-header-sep { width: 1px; height: 18px; background: rgba(255,255,255,.25); flex-shrink: 0; }
+    .tx-header-tagline { font-size: 13px; color: rgba(255,255,255,.55); line-height: 1; }
+
+    .tx-main { flex: 1; max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; width: 100%; }
+    .tx-back { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 500; color: var(--tx-blue); text-decoration: none; margin-bottom: 32px; }
+    .tx-back:hover { text-decoration: underline; }
+
+    h1 { font-size: 28px; font-weight: 700; color: var(--tx-ink); margin-bottom: 8px; }
+    .page-meta { font-size: 13px; color: var(--tx-muted); margin-bottom: 40px; }
+    h2 { font-size: 18px; font-weight: 600; color: var(--tx-ink); margin: 32px 0 10px; }
+    p { color: var(--tx-muted); margin-bottom: 14px; }
+    ul { color: var(--tx-muted); padding-left: 20px; margin-bottom: 14px; }
+    li { margin-bottom: 6px; }
+
+    .a11y-table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; font-size: 14px; }
+    .a11y-table th { text-align: left; padding: 10px 14px; background: var(--tx-navy); color: #fff; font-weight: 600; }
+    .a11y-table td { padding: 10px 14px; border-bottom: 1px solid var(--tx-border); color: var(--tx-muted); }
+    .a11y-table tr:last-child td { border-bottom: none; }
+    .a11y-table tr:nth-child(even) td { background: #f0f4f8; }
+
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .badge--green { background: #D1FAE5; color: #065F46; }
+    .badge--amber { background: #FEF3C7; color: #92400E; }
+
+    .tx-footer { background: var(--tx-navy); border-top: 1px solid rgba(255,255,255,.08); margin-top: auto; }
+    .tx-footer-inner { max-width: var(--tx-max-width); margin: 0 auto; padding: 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+    .tx-footer-brand { font-size: 14px; font-weight: 700; color: #fff; letter-spacing: .5px; }
+    .tx-footer-copy { font-size: 13px; color: rgba(255,255,255,.45); }
+    .tx-footer-nav { display: flex; gap: 20px; }
+    .tx-footer-nav a { font-size: 13px; color: rgba(255,255,255,.55); text-decoration: none; }
+    .tx-footer-nav a:hover { color: #fff; }
+    @media (max-width: 640px) {
+      .tx-header-tagline { display: none; }
+      .tx-main { padding: 32px 16px 56px; }
+      h1 { font-size: 22px; }
+      .tx-footer-inner { flex-direction: column; align-items: flex-start; }
+      .tx-footer-nav { flex-wrap: wrap; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="tx-header" role="banner">
+    <div class="tx-header-inner">
+      <div class="tx-header-brand">
+        <a href="/index.html" class="tx-logo" aria-label="Telco X — go to home page">TELCO&nbsp;X</a>
+        <span class="tx-header-sep" aria-hidden="true"></span>
+        <span class="tx-header-tagline" aria-hidden="true">Service Availability</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="tx-main" id="main" role="main">
+    <a href="/index.html" class="tx-back" aria-label="Back to home page">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to home
+    </a>
+
+    <h1>Accessibility</h1>
+    <p class="page-meta">Last reviewed: 1 January 2026 &nbsp;·&nbsp; Standard: WCAG 2.1 AA</p>
+
+    <h2>Our Commitment</h2>
+    <p>Telco X is committed to making its Service Availability portal accessible to all users, including those with disabilities. We aim to meet the Web Content Accessibility Guidelines (WCAG) 2.1 Level AA standard across all pages of this portal.</p>
+
+    <h2>Conformance Status</h2>
+    <p>The Telco X Service Availability portal is <strong>partially conformant</strong> with WCAG 2.1 AA. Partially conformant means some content does not fully conform to the standard. We are actively working to address known gaps.</p>
+
+    <table class="a11y-table" aria-label="Accessibility feature status">
+      <thead>
+        <tr>
+          <th scope="col">Feature</th>
+          <th scope="col">Status</th>
+          <th scope="col">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Keyboard navigation</td>
+          <td><span class="badge badge--green">Supported</span></td>
+          <td>All interactive elements reachable via Tab and arrow keys</td>
+        </tr>
+        <tr>
+          <td>Screen reader support</td>
+          <td><span class="badge badge--green">Supported</span></td>
+          <td>ARIA live regions announce search results and errors</td>
+        </tr>
+        <tr>
+          <td>Visible focus indicators</td>
+          <td><span class="badge badge--green">Supported</span></td>
+          <td>3:1 contrast ratio on all focus outlines</td>
+        </tr>
+        <tr>
+          <td>Colour contrast (text)</td>
+          <td><span class="badge badge--green">Supported</span></td>
+          <td>All body text meets 4.5:1 minimum ratio</td>
+        </tr>
+        <tr>
+          <td>Touch target size</td>
+          <td><span class="badge badge--green">Supported</span></td>
+          <td>All tap targets are at least 44 × 44 px</td>
+        </tr>
+        <tr>
+          <td>RAG status colour-only</td>
+          <td><span class="badge badge--green">Supported</span></td>
+          <td>Status always includes a text label alongside colour</td>
+        </tr>
+        <tr>
+          <td>PDF documents</td>
+          <td><span class="badge badge--amber">In progress</span></td>
+          <td>Legacy PDFs being remediated for tagged structure</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Assistive Technology Tested</h2>
+    <p>This portal has been tested with the following assistive technology combinations:</p>
+    <ul>
+      <li>VoiceOver + Safari on macOS and iOS</li>
+      <li>NVDA + Chrome on Windows</li>
+      <li>JAWS + Firefox on Windows</li>
+      <li>TalkBack + Chrome on Android</li>
+    </ul>
+
+    <h2>Known Issues</h2>
+    <p>We are currently aware of the following accessibility issues and are working to resolve them in an upcoming release:</p>
+    <ul>
+      <li>Map embed on the result page does not yet have a text alternative describing the pin location</li>
+      <li>Some legacy PDF fact sheets lack tagged headings for navigation</li>
+    </ul>
+
+    <h2>Feedback and Contact</h2>
+    <p>If you experience an accessibility barrier on any part of this portal, we want to hear from you. Please <a href="/contact.html" style="color:var(--tx-blue)">contact us</a> with a description of the issue and the page you were on, and we will respond within 5 business days.</p>
+  </main>
+
+  <footer class="tx-footer" role="contentinfo">
+    <div class="tx-footer-inner">
+      <div>
+        <p class="tx-footer-brand">TELCO&nbsp;X</p>
+        <p class="tx-footer-copy">&copy; 2026 Telco X. All rights reserved.</p>
+      </div>
+      <nav class="tx-footer-nav" aria-label="Footer">
+        <a href="/privacy.html">Privacy policy</a>
+        <a href="/terms.html">Terms of use</a>
+        <a href="/accessibility.html">Accessibility</a>
+        <a href="/contact.html">Contact us</a>
+      </nav>
+    </div>
+  </footer>
+
+</body>
+</html>

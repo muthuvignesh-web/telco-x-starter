@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Telco X — Address Result (Active)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Design-system tokens ─────────────────────────────────────────────── */
+    :root {
+      --tx-font:       "Inter", Arial, Helvetica, sans-serif;
+      --tx-navy:       #102A43;
+      --tx-blue:       #146EF5;
+      --tx-aqua:       #007F7D;
+      --tx-bg:         #F5F8FC;
+      --tx-surface:    #FFFFFF;
+      --tx-ink:        #172B4D;
+      --tx-muted:      #5F6B7A;
+      --tx-border:     #D9E2EC;
+      --rag-green:     #1B7F55;
+      --rag-amber:     #A85D00;
+      --rag-red:       #B8322A;
+      --tx-radius:     12px;
+      --tx-shadow:     0 1px 4px rgba(16,42,67,.08), 0 4px 16px rgba(16,42,67,.06);
+      --tx-max-width:  1120px;
+      --tx-touch-min:  44px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--tx-font);
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--tx-ink);
+      background: var(--tx-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Skip link ────────────────────────────────────────────────────────── */
+    .skip-link {
+      position: absolute; top: -100%; left: 16px; z-index: 9999;
+      background: var(--tx-navy); color: #fff; padding: 8px 16px;
+      border-radius: 0 0 8px 8px; font-weight: 600; text-decoration: none; font-size: 14px;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ─── Header ───────────────────────────────────────────────────────────── */
+    .tx-header {
+      background: var(--tx-navy);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .tx-header-inner {
+      max-width: var(--tx-max-width); margin: 0 auto; padding: 0 24px;
+      height: 56px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .tx-logo {
+      font-size: 18px; font-weight: 700; color: #FFFFFF;
+      text-decoration: none; letter-spacing: 0.5px;
+    }
+    .tx-logo:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 4px; border-radius: 4px; }
+    .tx-header-tagline { font-size: 13px; color: rgba(255,255,255,.55); font-weight: 400; }
+
+    /* ─── Address band ─────────────────────────────────────────────────────── */
+    .tx-addr-band {
+      background: linear-gradient(160deg, var(--tx-navy) 0%, #1A3F5C 100%);
+      padding: 32px 24px 56px;
+      position: relative;
+      overflow: hidden;
+    }
+    .tx-addr-band::after {
+      content: "";
+      position: absolute; bottom: -1px; left: 0; right: 0;
+      height: 32px; background: var(--tx-bg);
+      border-radius: 32px 32px 0 0;
+    }
+    .tx-addr-band-inner {
+      max-width: var(--tx-max-width); margin: 0 auto;
+      position: relative; z-index: 1;
+    }
+    .tx-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 500; color: rgba(255,255,255,.7);
+      text-decoration: none; margin-bottom: 16px;
+      min-height: var(--tx-touch-min);
+    }
+    .tx-back:hover { color: #FFFFFF; }
+    .tx-back:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 2px; border-radius: 4px; }
+    .addr-heading-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .addr-title { font-size: 28px; font-weight: 700; color: #FFFFFF; line-height: 1.25; }
+    .addr-sub   { font-size: 15px; color: rgba(255,255,255,.6); margin-top: 4px; }
+    .conn-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 999px;
+      font-size: 13px; font-weight: 600; flex-shrink: 0;
+    }
+    .conn-badge--active { background: #D1FAE5; color: var(--rag-green); }
+    .conn-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    /* ─── Main ─────────────────────────────────────────────────────────────── */
+    .tx-main {
+      flex: 1; max-width: var(--tx-max-width); width: 100%;
+      margin: 0 auto; padding: 32px 24px 64px;
+    }
+
+    /* ─── Map panel ────────────────────────────────────────────────────────── */
+    .map-panel {
+      aspect-ratio: 16 / 5;
+      background: linear-gradient(135deg, #E8F0F7 0%, #D4E5F5 100%);
+      border: 1px solid var(--tx-border); border-radius: var(--tx-radius);
+      box-shadow: var(--tx-shadow);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; margin-bottom: 24px;
+    }
+    .map-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(16,42,67,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16,42,67,.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .map-content { position: relative; z-index: 1; text-align: center; }
+    .map-pin {
+      width: 36px; height: 36px; margin: 0 auto 10px;
+      background: var(--tx-blue); border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 10px rgba(20,110,245,.4);
+    }
+    .map-pin::after { content: ""; width: 14px; height: 14px; background: #fff; border-radius: 50%; }
+    .map-label  { font-size: 13px; font-weight: 600; color: var(--tx-ink); }
+    .map-coords { font-size: 12px; color: var(--tx-muted); font-family: monospace; margin-top: 2px; }
+
+    /* ─── Card grid ────────────────────────────────────────────────────────── */
+    .result-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 16px;
+    }
+    .tx-card {
+      background: var(--tx-surface); border: 1px solid var(--tx-border);
+      border-radius: var(--tx-radius); box-shadow: var(--tx-shadow); padding: 24px;
+    }
+    .tx-card--full { grid-column: 1 / -1; }
+    .card-label {
+      font-size: 11px; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--tx-muted); margin-bottom: 12px;
+    }
+    .card-value { font-size: 20px; font-weight: 700; color: var(--tx-navy); }
+    .card-sub   { font-size: 13px; color: var(--tx-muted); margin-top: 4px; }
+    .detail-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 9px 0; border-bottom: 1px solid var(--tx-border); font-size: 14px;
+    }
+    .detail-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .detail-key { color: var(--tx-muted); }
+    .detail-val { font-weight: 500; color: var(--tx-ink); }
+
+    /* ─── RAG badges — P2-AC-05
+       CSS class tx-rag--green / tx-rag--amber / tx-rag--red
+       AND visible text GREEN / AMBER / RED — colour alone not used          */
+    .tx-rag {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 15px; font-weight: 700; margin-bottom: 4px;
+    }
+    .tx-rag-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+    .tx-rag--green { color: var(--rag-green); }
+    .tx-rag--green .tx-rag-dot { background: var(--rag-green); }
+    .tx-rag--amber { color: var(--rag-amber); }
+    .tx-rag--amber .tx-rag-dot { background: var(--rag-amber); }
+    .tx-rag--red   { color: var(--rag-red);   }
+    .tx-rag--red   .tx-rag-dot { background: var(--rag-red); }
+
+    /* ─── Service unavailable — P2-AC-04 ──────────────────────────────────── */
+    .service-error {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #FFF1F0; border: 1px solid #F5C0BC;
+      border-radius: 8px; padding: 14px 16px;
+      font-size: 14px; color: var(--rag-red); margin-top: 12px;
+    }
+    .service-error-icon { flex-shrink: 0; font-size: 15px; }
+
+    /* ─── Upgrade card — P2-AC-03 ──────────────────────────────────────────── */
+    .upgrade-body { font-size: 15px; color: var(--tx-ink); margin-bottom: 16px; }
+    .upgrade-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+    .upgrade-chip {
+      padding: 4px 12px; background: #EEF4FF; color: var(--tx-blue);
+      border-radius: 999px; font-size: 13px; font-weight: 600;
+    }
+    .upgrade-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #D1FAE5; border: 1px solid #6EE7B7;
+      border-radius: 8px; padding: 14px 16px;
+      font-size: 14px; color: var(--rag-green);
+    }
+    .upgrade-banner-icon { flex-shrink: 0; font-size: 15px; }
+
+    /* ─── Button ───────────────────────────────────────────────────────────── */
+    .tx-btn-primary {
+      display: inline-flex; align-items: center; gap: 6px;
+      min-height: var(--tx-touch-min); padding: 10px 20px;
+      font-size: 15px; font-weight: 600; font-family: var(--tx-font);
+      color: #FFFFFF; background: var(--tx-blue);
+      border: none; border-radius: 8px; cursor: pointer;
+      text-decoration: none; transition: background .15s; white-space: nowrap;
+    }
+    .tx-btn-primary:hover { background: #0F5CD6; }
+    .tx-btn-primary:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 3px; }
+
+    /* ─── Footer ───────────────────────────────────────────────────────────── */
+    .tx-footer { background: var(--tx-navy); border-top: 1px solid rgba(255,255,255,.08); margin-top: auto; }
+    .tx-footer-inner {
+      max-width: var(--tx-max-width); margin: 0 auto; padding: 24px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .tx-footer-brand { font-size: 14px; font-weight: 700; color: #FFFFFF; letter-spacing: 0.5px; }
+    .tx-footer-copy  { font-size: 13px; color: rgba(255,255,255,.45); }
+    .tx-footer-nav   { display: flex; gap: 20px; }
+    .tx-footer-nav a { font-size: 13px; color: rgba(255,255,255,.55); text-decoration: none; transition: color .15s; }
+    .tx-footer-nav a:hover { color: #FFFFFF; }
+    .tx-footer-nav a:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 2px; border-radius: 2px; }
+
+    /* ─── Responsive ───────────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .tx-header-tagline { display: none; }
+      .tx-addr-band { padding: 24px 16px 48px; }
+      .addr-title { font-size: 22px; }
+      .tx-main { padding: 20px 16px 48px; }
+      .result-grid { grid-template-columns: 1fr; }
+      .tx-card--full { grid-column: auto; }
+      .tx-footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .tx-footer-nav { flex-wrap: wrap; gap: 12px; }
+    }
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .tx-addr-band { padding: 36px 24px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ═══ HEADER ══════════════════════════════════════════════════════════ -->
+  <header class="tx-header" role="banner">
+    <div class="tx-header-inner">
+      <a href="/index.html" class="tx-logo" aria-label="Telco X — go to home page">TELCO&nbsp;X</a>
+      <span class="tx-header-tagline" aria-hidden="true">Service Availability</span>
+    </div>
+  </header>
+
+  <!-- ═══ ADDRESS BAND ════════════════════════════════════════════════════ -->
+  <div class="tx-addr-band">
+    <div class="tx-addr-band-inner">
+      <a href="/index.html" class="tx-back" aria-label="Back to address search">&#8592; Back to search</a>
+      <div class="addr-heading-row">
+        <div>
+          <h1 class="addr-title">88 Eucalyptus Drive</h1>
+          <p class="addr-sub">Carlton VIC 3053 &mdash; LOC-002</p>
+        </div>
+        <span class="conn-badge conn-badge--active" aria-label="Connection status: Active">
+          <span class="conn-badge-dot" aria-hidden="true"></span>
+          Active
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN ════════════════════════════════════════════════════════════ -->
+  <main id="main" class="tx-main" role="main">
+
+    <!-- Map panel — P2-AC-01: pin pointing to exact address coordinates from Tool 1 -->
+    <div class="map-panel" role="img"
+      aria-label="Map showing pin at 88 Eucalyptus Drive, Carlton — coordinates -37.8001, 144.9670">
+      <div class="map-grid" aria-hidden="true"></div>
+      <div class="map-content">
+        <div class="map-pin" aria-hidden="true"></div>
+        <p class="map-label">88 Eucalyptus Drive, Carlton VIC 3053</p>
+        <p class="map-coords">-37.8001, 144.9670</p>
+      </div>
+    </div>
+
+    <div class="result-grid">
+
+      <!-- Current plan — Tool 4 (P2-AC-01) -->
+      <div class="tx-card">
+        <p class="card-label">Current plan</p>
+        <p class="card-value">Ultra</p>
+        <p class="card-sub">1000 Mbps down &middot; 50 Mbps up</p>
+        <div style="margin-top:16px">
+          <div class="detail-row">
+            <span class="detail-key">Account ref</span>
+            <span class="detail-val">ACC-9041</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-key">Connected since</span>
+            <span class="detail-val">14 Mar 2021</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connection technology — Tool 2 -->
+      <div class="tx-card">
+        <p class="card-label">Connection technology</p>
+        <p class="card-value">FTTP</p>
+        <p class="card-sub">Fibre to the premises</p>
+        <div style="margin-top:16px">
+          <div class="detail-row">
+            <span class="detail-key">Max speed</span>
+            <span class="detail-val">1000 / 50 Mbps</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Network health — Tool 5 (P2-AC-01, P2-AC-05)
+           CSS class tx-rag--green + visible text GREEN                      -->
+      <div class="tx-card">
+        <p class="card-label">Network health</p>
+        <div class="tx-rag tx-rag--green" role="status" aria-label="Network health: GREEN">
+          <span class="tx-rag-dot" aria-hidden="true"></span>
+          GREEN
+        </div>
+        <div style="margin-top:12px">
+          <div class="detail-row">
+            <span class="detail-key">Sync speed</span>
+            <span class="detail-val">985 Mbps</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-key">Active outages</span>
+            <span class="detail-val">None</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-key">Last checked</span>
+            <span class="detail-val">23 Jun 2026, 08:14</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Service health — Tool 6 (P2-AC-01, P2-AC-05)
+           CSS class tx-rag--amber + visible text AMBER
+           P2-AC-04: error variant shown below (hidden by default)           -->
+      <div class="tx-card">
+        <p class="card-label">Service health</p>
+        <div class="tx-rag tx-rag--amber" role="status" aria-label="Service health: AMBER">
+          <span class="tx-rag-dot" aria-hidden="true"></span>
+          AMBER
+        </div>
+        <div style="margin-top:12px">
+          <div class="detail-row">
+            <span class="detail-key">Open tickets</span>
+            <span class="detail-val">1</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-key">Last appointment</span>
+            <span class="detail-val">1 Jun 2026</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-key">Next scheduled</span>
+            <span class="detail-val">None booked</span>
+          </div>
+        </div>
+
+        <!-- P2-AC-04 — Service health unavailable error state
+             Shown when Tool 6 returns non-200; remove [hidden] in JS        -->
+        <div class="service-error" hidden role="alert" aria-live="assertive">
+          <span class="service-error-icon" aria-hidden="true">&#9888;</span>
+          <span>Service status not available. Please contact customer care.</span>
+        </div>
+      </div>
+
+      <!-- Upgrade card — Tool 4 (P2-AC-03)
+           Only rendered when upgrade_eligible = true
+           JS removes [hidden] when eligible; element stays hidden otherwise -->
+      <div class="tx-card tx-card--full" id="upgrade-card" aria-label="Upgrade available">
+        <p class="card-label">Upgrade available</p>
+        <p class="upgrade-body">
+          Faster speed tiers are available at this address. Upgrade to get more from your connection.
+        </p>
+        <div class="upgrade-chips">
+          <span class="upgrade-chip">Up to 2000 Mbps</span>
+          <span class="upgrade-chip">FTTP</span>
+          <span class="upgrade-chip">No lock-in contract</span>
+        </div>
+        <div class="upgrade-banner" role="note">
+          <span class="upgrade-banner-icon" aria-hidden="true">&#9989;</span>
+          Contact your provider for upgrade
+        </div>
+      </div>
+
+    </div><!-- /.result-grid -->
+
+    <!-- View provider details CTA -->
+    <a href="/details.html?id=LOC-002&mode=details" class="tx-btn-primary">
+      View provider details &#8594;
+    </a>
+
+  </main>
+
+  <!-- ═══ FOOTER ══════════════════════════════════════════════════════════ -->
+  <footer class="tx-footer" role="contentinfo">
+    <div class="tx-footer-inner">
+      <div>
+        <p class="tx-footer-brand">TELCO&nbsp;X</p>
+        <p class="tx-footer-copy">&copy; 2026 Telco X. All rights reserved.</p>
+      </div>
+      <nav class="tx-footer-nav" aria-label="Footer">
+        <a href="#">Privacy policy</a>
+        <a href="#">Terms of use</a>
+        <a href="#">Accessibility</a>
+        <a href="#">Contact us</a>
+      </nav>
+    </div>
+  </footer>
+
+</body>
+</html>

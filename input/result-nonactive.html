@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Telco X — Address Result (Previous / Never)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── Design-system tokens ─────────────────────────────────────────────── */
+    :root {
+      --tx-font:       "Inter", Arial, Helvetica, sans-serif;
+      --tx-navy:       #102A43;
+      --tx-blue:       #146EF5;
+      --tx-aqua:       #007F7D;
+      --tx-bg:         #F5F8FC;
+      --tx-surface:    #FFFFFF;
+      --tx-ink:        #172B4D;
+      --tx-muted:      #5F6B7A;
+      --tx-border:     #D9E2EC;
+      --rag-green:     #1B7F55;
+      --rag-amber:     #A85D00;
+      --rag-red:       #B8322A;
+      --tx-radius:     12px;
+      --tx-shadow:     0 1px 4px rgba(16,42,67,.08), 0 4px 16px rgba(16,42,67,.06);
+      --tx-max-width:  1120px;
+      --tx-touch-min:  44px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--tx-font);
+      font-size: 16px;
+      line-height: 1.5;
+      color: var(--tx-ink);
+      background: var(--tx-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── Skip link ────────────────────────────────────────────────────────── */
+    .skip-link {
+      position: absolute; top: -100%; left: 16px; z-index: 9999;
+      background: var(--tx-navy); color: #fff; padding: 8px 16px;
+      border-radius: 0 0 8px 8px; font-weight: 600; text-decoration: none; font-size: 14px;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ─── Header ───────────────────────────────────────────────────────────── */
+    .tx-header {
+      background: var(--tx-navy);
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .tx-header-inner {
+      max-width: var(--tx-max-width); margin: 0 auto; padding: 0 24px;
+      height: 56px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .tx-logo {
+      font-size: 18px; font-weight: 700; color: #FFFFFF;
+      text-decoration: none; letter-spacing: 0.5px;
+    }
+    .tx-logo:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 4px; border-radius: 4px; }
+    .tx-header-tagline { font-size: 13px; color: rgba(255,255,255,.55); font-weight: 400; }
+
+    /* ─── Address band ─────────────────────────────────────────────────────── */
+    .tx-addr-band {
+      background: linear-gradient(160deg, var(--tx-navy) 0%, #1A3F5C 100%);
+      padding: 32px 24px 56px;
+      position: relative; overflow: hidden;
+    }
+    .tx-addr-band::after {
+      content: "";
+      position: absolute; bottom: -1px; left: 0; right: 0;
+      height: 32px; background: var(--tx-bg);
+      border-radius: 32px 32px 0 0;
+    }
+    .tx-addr-band-inner {
+      max-width: var(--tx-max-width); margin: 0 auto;
+      position: relative; z-index: 1;
+    }
+    .tx-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 14px; font-weight: 500; color: rgba(255,255,255,.7);
+      text-decoration: none; margin-bottom: 16px;
+      min-height: var(--tx-touch-min);
+    }
+    .tx-back:hover { color: #FFFFFF; }
+    .tx-back:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 2px; border-radius: 4px; }
+    .addr-heading-row {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .addr-title { font-size: 28px; font-weight: 700; color: #FFFFFF; line-height: 1.25; }
+    .addr-sub   { font-size: 15px; color: rgba(255,255,255,.6); margin-top: 4px; }
+
+    /* Connection badges */
+    .conn-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 14px; border-radius: 999px;
+      font-size: 13px; font-weight: 600; flex-shrink: 0;
+    }
+    .conn-badge--previous { background: #FEF3C7; color: var(--rag-amber); }
+    .conn-badge--never    { background: #F1F5F9; color: var(--tx-muted);  }
+    .conn-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    /* ─── Badge toggle (design preview only) ──────────────────────────────── */
+    .badge-toggle {
+      display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap;
+    }
+    .badge-toggle-label { font-size: 12px; color: rgba(255,255,255,.5); }
+    .badge-btn {
+      padding: 4px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,.25);
+      background: transparent; color: rgba(255,255,255,.7); font-size: 12px; font-weight: 500;
+      cursor: pointer; font-family: var(--tx-font); transition: background .15s;
+    }
+    .badge-btn.active { background: rgba(255,255,255,.15); color: #fff; border-color: rgba(255,255,255,.5); }
+    .badge-btn:hover  { background: rgba(255,255,255,.1); }
+
+    /* ─── Main ─────────────────────────────────────────────────────────────── */
+    .tx-main {
+      flex: 1; max-width: var(--tx-max-width); width: 100%;
+      margin: 0 auto; padding: 32px 24px 64px;
+    }
+
+    /* ─── Map panel ────────────────────────────────────────────────────────── */
+    .map-panel {
+      aspect-ratio: 16 / 5;
+      background: linear-gradient(135deg, #E8F0F7 0%, #D4E5F5 100%);
+      border: 1px solid var(--tx-border); border-radius: var(--tx-radius);
+      box-shadow: var(--tx-shadow);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden; margin-bottom: 24px;
+    }
+    .map-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(16,42,67,.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16,42,67,.05) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .map-content { position: relative; z-index: 1; text-align: center; }
+    .map-pin {
+      width: 36px; height: 36px; margin: 0 auto 10px;
+      background: var(--tx-blue); border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 10px rgba(20,110,245,.4);
+    }
+    .map-pin::after { content: ""; width: 14px; height: 14px; background: #fff; border-radius: 50%; }
+    .map-label  { font-size: 13px; font-weight: 600; color: var(--tx-ink); }
+    .map-coords { font-size: 12px; color: var(--tx-muted); font-family: monospace; margin-top: 2px; }
+
+    /* ─── Cards ────────────────────────────────────────────────────────────── */
+    .result-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 16px; margin-bottom: 16px;
+    }
+    .tx-card {
+      background: var(--tx-surface); border: 1px solid var(--tx-border);
+      border-radius: var(--tx-radius); box-shadow: var(--tx-shadow); padding: 24px;
+    }
+    .tx-card--full { grid-column: 1 / -1; }
+    .card-label {
+      font-size: 11px; font-weight: 600; letter-spacing: .06em;
+      text-transform: uppercase; color: var(--tx-muted); margin-bottom: 12px;
+    }
+    .card-value { font-size: 20px; font-weight: 700; color: var(--tx-navy); }
+    .card-sub   { font-size: 13px; color: var(--tx-muted); margin-top: 4px; }
+
+    /* ─── Product catalogue ────────────────────────────────────────────────── */
+    .plan-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+    .plan-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 16px; background: var(--tx-bg);
+      border: 1px solid var(--tx-border); border-radius: 8px;
+    }
+    .plan-name  { font-weight: 600; color: var(--tx-ink); font-size: 15px; }
+    .plan-meta  { font-size: 13px; color: var(--tx-muted); margin-top: 2px; }
+    .plan-id    { font-size: 11px; color: var(--tx-muted); margin-top: 1px; font-family: monospace; }
+
+    /* ─── Button ───────────────────────────────────────────────────────────── */
+    .tx-btn-primary {
+      display: inline-flex; align-items: center; gap: 6px;
+      min-height: var(--tx-touch-min); padding: 10px 20px;
+      font-size: 15px; font-weight: 600; font-family: var(--tx-font);
+      color: #FFFFFF; background: var(--tx-blue);
+      border: none; border-radius: 8px; cursor: pointer;
+      text-decoration: none; transition: background .15s; white-space: nowrap;
+    }
+    .tx-btn-primary:hover { background: #0F5CD6; }
+    .tx-btn-primary:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 3px; }
+    .tx-btn-sm { font-size: 13px; padding: 8px 16px; min-height: 36px; }
+
+    /* ─── Footer ───────────────────────────────────────────────────────────── */
+    .tx-footer { background: var(--tx-navy); border-top: 1px solid rgba(255,255,255,.08); margin-top: auto; }
+    .tx-footer-inner {
+      max-width: var(--tx-max-width); margin: 0 auto; padding: 24px;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .tx-footer-brand { font-size: 14px; font-weight: 700; color: #FFFFFF; letter-spacing: 0.5px; }
+    .tx-footer-copy  { font-size: 13px; color: rgba(255,255,255,.45); }
+    .tx-footer-nav   { display: flex; gap: 20px; }
+    .tx-footer-nav a { font-size: 13px; color: rgba(255,255,255,.55); text-decoration: none; transition: color .15s; }
+    .tx-footer-nav a:hover { color: #FFFFFF; }
+    .tx-footer-nav a:focus-visible { outline: 2px solid var(--tx-blue); outline-offset: 2px; border-radius: 2px; }
+
+    /* ─── Responsive ───────────────────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .tx-header-tagline { display: none; }
+      .tx-addr-band { padding: 24px 16px 48px; }
+      .addr-title { font-size: 22px; }
+      .tx-main { padding: 20px 16px 48px; }
+      .result-grid { grid-template-columns: 1fr; }
+      .tx-card--full { grid-column: auto; }
+      .plan-row { flex-direction: column; align-items: flex-start; }
+      .tx-footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .tx-footer-nav { flex-wrap: wrap; gap: 12px; }
+    }
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .tx-addr-band { padding: 36px 24px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <!-- ═══ HEADER ══════════════════════════════════════════════════════════ -->
+  <header class="tx-header" role="banner">
+    <div class="tx-header-inner">
+      <a href="/index.html" class="tx-logo" aria-label="Telco X — go to home page">TELCO&nbsp;X</a>
+      <span class="tx-header-tagline" aria-hidden="true">Service Availability</span>
+    </div>
+  </header>
+
+  <!-- ═══ ADDRESS BAND ════════════════════════════════════════════════════ -->
+  <div class="tx-addr-band">
+    <div class="tx-addr-band-inner">
+      <a href="/index.html" class="tx-back" aria-label="Back to address search">&#8592; Back to search</a>
+      <div class="addr-heading-row">
+        <div>
+          <h1 class="addr-title">34 Wattle Grove</h1>
+          <p class="addr-sub">Fitzroy VIC 3065 &mdash; LOC-005</p>
+        </div>
+        <!-- JS sets conn-badge--previous or conn-badge--never based on connection_status -->
+        <span id="conn-badge" class="conn-badge conn-badge--previous"
+          aria-label="Connection status: Previously connected">
+          <span class="conn-badge-dot" aria-hidden="true"></span>
+          <span id="conn-badge-text">Previously connected</span>
+        </span>
+      </div>
+      <!-- Design-preview toggle (not shown in production) -->
+      <div class="badge-toggle" role="group" aria-label="Preview connection status">
+        <span class="badge-toggle-label">Preview:</span>
+        <button class="badge-btn active" onclick="setBadge('previous')">Previously connected</button>
+        <button class="badge-btn" onclick="setBadge('never')">Never connected</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN ════════════════════════════════════════════════════════════ -->
+  <main id="main" class="tx-main" role="main">
+
+    <!-- Map panel — P2-AC-02: pin at correct coordinates from Tool 1 -->
+    <div class="map-panel" role="img"
+      aria-label="Map showing pin at 34 Wattle Grove, Fitzroy — coordinates -37.7990, 144.9781">
+      <div class="map-grid" aria-hidden="true"></div>
+      <div class="map-content">
+        <div class="map-pin" aria-hidden="true"></div>
+        <p class="map-label">34 Wattle Grove, Fitzroy VIC 3065</p>
+        <p class="map-coords">-37.7990, 144.9781</p>
+      </div>
+    </div>
+
+    <!-- Cards grid — P2-AC-02: technology + product catalogue only
+         No network card · No service card · No subscriber card              -->
+    <div class="result-grid">
+
+      <!-- Connection technology — Tool 2 -->
+      <div class="tx-card">
+        <p class="card-label">Connection technology</p>
+        <p class="card-value">HFC</p>
+        <p class="card-sub">Hybrid fibre coaxial</p>
+      </div>
+
+      <!-- Connection status -->
+      <div class="tx-card">
+        <p class="card-label">Status</p>
+        <p class="card-value" id="status-text"
+          style="font-size:17px; color:var(--tx-muted)">Previously connected</p>
+        <p class="card-sub">Choose a plan below to get connected</p>
+      </div>
+
+      <!-- Product catalogue — Tool 3 (P2-AC-02)
+           Plans driven by technology from Tool 2
+           No retail partners shown (per design decision)                     -->
+      <div class="tx-card tx-card--full">
+        <p class="card-label">Available plans</p>
+        <div class="plan-list">
+
+          <div class="plan-row">
+            <div>
+              <p class="plan-name">Essential</p>
+              <p class="plan-meta">25 / 5 Mbps</p>
+              <p class="plan-id">P-HFC-25</p>
+            </div>
+            <a href="/details.html?id=LOC-005&mode=providers&tech=HFC&product=P-HFC-25"
+              class="tx-btn-primary tx-btn-sm">Choose this plan</a>
+          </div>
+
+          <div class="plan-row">
+            <div>
+              <p class="plan-name">Standard</p>
+              <p class="plan-meta">50 / 20 Mbps</p>
+              <p class="plan-id">P-HFC-50</p>
+            </div>
+            <a href="/details.html?id=LOC-005&mode=providers&tech=HFC&product=P-HFC-50"
+              class="tx-btn-primary tx-btn-sm">Choose this plan</a>
+          </div>
+
+          <div class="plan-row">
+            <div>
+              <p class="plan-name">Family</p>
+              <p class="plan-meta">100 / 20 Mbps</p>
+              <p class="plan-id">P-HFC-100</p>
+            </div>
+            <a href="/details.html?id=LOC-005&mode=providers&tech=HFC&product=P-HFC-100"
+              class="tx-btn-primary tx-btn-sm">Choose this plan</a>
+          </div>
+
+          <div class="plan-row">
+            <div>
+              <p class="plan-name">Power</p>
+              <p class="plan-meta">250 / 25 Mbps</p>
+              <p class="plan-id">P-HFC-250</p>
+            </div>
+            <a href="/details.html?id=LOC-005&mode=providers&tech=HFC&product=P-HFC-250"
+              class="tx-btn-primary tx-btn-sm">Choose this plan</a>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /.result-grid -->
+
+    <!-- View provider details CTA -->
+    <a href="/details.html?id=LOC-005&mode=providers" class="tx-btn-primary">
+      View provider details &#8594;
+    </a>
+
+  </main>
+
+  <!-- ═══ FOOTER ══════════════════════════════════════════════════════════ -->
+  <footer class="tx-footer" role="contentinfo">
+    <div class="tx-footer-inner">
+      <div>
+        <p class="tx-footer-brand">TELCO&nbsp;X</p>
+        <p class="tx-footer-copy">&copy; 2026 Telco X. All rights reserved.</p>
+      </div>
+      <nav class="tx-footer-nav" aria-label="Footer">
+        <a href="#">Privacy policy</a>
+        <a href="#">Terms of use</a>
+        <a href="#">Accessibility</a>
+        <a href="#">Contact us</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    // Design-preview badge toggle (not in production result.js)
+    function setBadge(status) {
+      const badge = document.getElementById('conn-badge');
+      const text  = document.getElementById('conn-badge-text');
+      const statusText = document.getElementById('status-text');
+      badge.className = 'conn-badge conn-badge--' + status;
+      if (status === 'previous') {
+        text.textContent = 'Previously connected';
+        badge.setAttribute('aria-label', 'Connection status: Previously connected');
+        statusText.textContent = 'Previously connected';
+      } else {
+        text.textContent = 'Never connected';
+        badge.setAttribute('aria-label', 'Connection status: Never connected');
+        statusText.textContent = 'No previous connection';
+      }
+      document.querySelectorAll('.badge-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+  </script>
+
+</body>
+</html>
